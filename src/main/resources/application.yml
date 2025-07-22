@@ -1,0 +1,41 @@
+# Configurazione Database PostgreSQL
+#DB_URL: jdbc:postgresql://tst-acta-coto01-pdb01.csi.it:5432/PG15DEV01
+#DB_USER: actadb_f4
+#DB_PASSWORD: mypass
+#DB_DRIVER: org.postgresql.Driver
+
+server:
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: scartobl
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://dbpostgresql:5432/testdb}
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:admin}
+#    hikari:
+#      schema: ${DB_SCHEMA}
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+
+  #jpa configuration
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  # jpa configuration
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+
+  caching:
+    messages: 900000
+
+logging:
+  level:
+    root: "warn"
+    it.doqui.theca: "debug"
+    org.springframework.jdbc.core: "TRACE"
