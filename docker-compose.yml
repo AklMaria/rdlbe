@@ -1,49 +1,45 @@
-version: '3'
+version: '3.8'
 
+# Definizione dei servizi (container)
 services:
-  dbpostgresql:
-    container_name: postgreSQL
-    image: "postgres"
-    ports:
-      - "5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
+  # Servizio per il database PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: rdldb
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: testdb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      restart: unless-stopped
-  pgadmin:
-        container_name: pgadmin4_container
-        image: dpage/pgadmin4
-        restart: always
-        environment:
-          PGADMIN_DEFAULT_EMAIL: admin@admin.com
-          PGADMIN_DEFAULT_PASSWORD: root
-          PGADMIN_LISTEN_PORT: 50
-        ports:
-          - "5050:50"
-        volumes:
-          - pgadmin-data:/var/lib/pgadmin
-        links:
-          - "dbpostgresql:pgsql-server"
-        depends_on:
-          - dbpostgresql
-
-  app:
-    build: .
-    image: appbootrest
-    container_name: appbootrest
+      POSTGRES_DB: rdldb
     ports:
-      - "8080:8080"
-    depends_on:
-      - dbpostgresql
-    environment:
-     - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/testdb
-     - SPRING_DATASOURCE_USERNAME=admin
-     - SPRING_DATASOURCE_PASSWORD=admin
-     - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-volumes:
-  db-data:
-  pgadmin-data:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spring-net
 
+  backend:
+    build: .
+    container_name: rdlbe
+    restart: on-failure
+    depends_on:
+      - db
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rdldb
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - spring-net
+
+# Definizione dei volumi
+volumes:
+  postgres_data:
+    driver: local
+
+# Definizione della rete custom
+networks:
+  spring-net:
+    driver: bridge
