@@ -6,6 +6,7 @@ import com.rdlbe.application.business.internal.domains.Classroom;
 import com.rdlbe.foundations.utils.DBUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +18,24 @@ import java.util.Optional;
 @Slf4j
 public class ClassroomDAOImpl implements ClassroomDAO {
 
-    private final static String SELECT_CLASSROOMS = "SELECT c.* FROM classrooms";
+    private final static String SELECT_CLASSROOMS = "SELECT c.* FROM classrooms c";
+    private final static String INSERT_CLASSROOM = """
+        INSERT INTO classrooms (name, description, max_seats, is_active, date_start_time, date_end_time)
+        VALUES (:name, :description, :maxSeats, :isActive, :dateStartTime, :dateEndTime)
+        RETURNING id
+    """;
+    private final static String UPDATE_CLASSROOM = """
+        UPDATE classrooms
+        SET name = :name,
+            description = :description,
+            max_seats = :maxSeats,
+            is_active = :isActive,
+            date_start_time = :dateStartTime,
+            date_end_time = :dateEndTime
+        WHERE id = :id
+    """;
+    private final static String DELETE_CLASSROOM = "DELETE FROM classrooms WHERE id = :id";
+    private final static String FIND_BY_ID = "SELECT c.* FROM classrooms c WHERE id = :id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
@@ -29,34 +47,53 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 
     @Override
     public Long create(Classroom entity) {
-        return 0L;
+        var params = new MapSqlParameterSource()
+                .addValue("name", entity.getName())
+                .addValue("description", entity.getDescription())
+                .addValue("maxSeats", entity.getMaxSeats())
+                .addValue("isActive", entity.getIsActive())
+                .addValue("dateStartTime", entity.getDateStartTime())
+                .addValue("dateEndTime", entity.getDateEndTime());
+
+        return jdbcTemplate.queryForObject(INSERT_CLASSROOM, params, Long.class);
     }
 
     @Override
     public void update(Classroom entity) {
+        var params = new MapSqlParameterSource()
+                .addValue("id", entity.getId())
+                .addValue("name", entity.getName())
+                .addValue("description", entity.getDescription())
+                .addValue("maxSeats", entity.getMaxSeats())
+                .addValue("isActive", entity.getIsActive())
+                .addValue("dateStartTime", entity.getDateStartTime())
+                .addValue("dateEndTime", entity.getDateEndTime());
 
-    }
-
-    @Override
-    public int count(Map<String, ?> filters) {
-        return 0;
+        jdbcTemplate.update(UPDATE_CLASSROOM, params);
     }
 
     @Override
     public Optional<Classroom> findById(Long id) {
-        return Optional.empty();
+        var params = new MapSqlParameterSource().addValue("id", id);
+        var results = jdbcTemplate.query(FIND_BY_ID, params, new ClassroomRowMapper(objectMapper));
+        return results.stream().findFirst();
     }
 
     @Override
     public void delete(Long id, Long idUtenteAggiornamento) {
+        var params = new MapSqlParameterSource().addValue("id", id);
+        jdbcTemplate.update(DELETE_CLASSROOM, params);
+    }
 
+    @Override
+    public int count(Map<String, ?> filters) {
+        // opzionale, non usato ancora
+        return 0;
     }
 
     @Override
     public List<Classroom> find(Map<String, ?> filters) {
         var sql = DBUtils.buildQuery(SELECT_CLASSROOMS, null);
-        // Per le altre query per cui serve la WHERE condition scrivi questo
-        // var sql = DBUtils.buildQuery(SELECT_CLASSROOMS + DBUtils.andConditions(filters, fieldMap), null);
         return jdbcTemplate.query(sql, DBUtils.mapFilters(filters), new ClassroomRowMapper(objectMapper));
     }
 }

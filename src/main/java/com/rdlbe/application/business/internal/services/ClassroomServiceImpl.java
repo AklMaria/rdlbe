@@ -47,21 +47,29 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Optional<ClassroomItem> getClassroomById(Long id) {
-        return Optional.empty();
+        return classroomDAO.findById(id)
+                .map(classroom -> modelMapper.map(classroom, ClassroomItem.class));
     }
 
     @Override
-    public ClassroomItem createClassroom(ClassroomInsertItem classroom) {
-        return null;
+    public ClassroomItem createClassroom(ClassroomInsertItem classroomDto) {
+        // Mappa il DTO in entità
+        Classroom classroom = modelMapper.map(classroomDto, Classroom.class);
+        Long id = classroomDAO.create(classroom); // Il DAO deve restituire l'ID creato
+        classroom.setId(id);
+        return modelMapper.map(classroom, ClassroomItem.class);
     }
 
     @Override
-    public ClassroomItem updateClassroom(Long id, ClassroomUpdateItem classroom) {
-        return null;
+    public ClassroomItem updateClassroom(Long id, ClassroomUpdateItem classroomDto) {
+        Classroom classroom = modelMapper.map(classroomDto, Classroom.class);
+        classroom.setId(id);
+        classroomDAO.update(classroom);
+        return modelMapper.map(classroom, ClassroomItem.class);
     }
 
     @Override
     public void deleteClassroom(Long id) {
-
+        classroomDAO.delete(id, null); // se non serve idUtenteAggiornamento, passiamo null
     }
 }
