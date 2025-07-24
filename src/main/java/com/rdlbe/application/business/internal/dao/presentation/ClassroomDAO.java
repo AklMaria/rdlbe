@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,12 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
             return classroom;
         }
     }
+
+
+    List<Classroom> findByUserAndDate(Long userId, LocalDateTime date);
+    List<Classroom> findAvailableByDate(LocalDateTime date);
+    List<Classroom> findByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+
 
 }
 

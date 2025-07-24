@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,4 +73,34 @@ public class ClassroomServiceImpl implements ClassroomService {
     public void deleteClassroom(Long id) {
         classroomDAO.delete(id, null); // se non serve idUtenteAggiornamento, passiamo null
     }
+
+    //Query personalizzate
+    @Override
+    public List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date) {
+        var classrooms = classroomDAO.findByUserAndDate(userId, date)
+                .stream()
+                .map(c -> modelMapper.map(c, ClassroomItem.class))
+                .toList();
+        return classrooms;
+    }
+
+    @Override
+    public List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date) {
+        var classrooms = classroomDAO.findAvailableByDate(date)
+                .stream()
+                .map(c -> modelMapper.map(c, ClassroomItem.class))
+                .toList();
+        return classrooms;
+    }
+
+    @Override
+    public List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        var classrooms = classroomDAO.findByUserInDateRange(userId, startDate, endDate)
+                .stream()
+                .map(c -> modelMapper.map(c, ClassroomItem.class))
+                .toList();
+        return classrooms;
+    }
+
+
 }

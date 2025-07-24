@@ -16,10 +16,10 @@ public interface ClassroomService {
     ClassroomItem updateClassroom(Long id, ClassroomUpdateItem classroom);
     void deleteClassroom(Long id);
 
-    /* Query personalizzate
+    //Query personalizzate
     List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date);
     List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date);
     List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate);
-    */
+
 
 }

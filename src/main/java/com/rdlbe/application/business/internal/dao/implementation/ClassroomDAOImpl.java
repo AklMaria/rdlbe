@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +37,25 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     """;
     private final static String DELETE_CLASSROOM = "DELETE FROM classrooms WHERE id = :id";
     private final static String FIND_BY_ID = "SELECT c.* FROM classrooms c WHERE id = :id";
+
+    private final static String CLASSROOMS_BY_USER_AND_DATE = """
+    SELECT c.* FROM classrooms c
+    JOIN inscriptions i ON c.id = i.classroom_id
+    WHERE i.user_id = :userId AND DATE(c.date_start_time) = DATE(:date)
+""";
+
+    private final static String AVAILABLE_CLASSROOMS_BY_DATE = """
+    SELECT c.* FROM classrooms c
+    WHERE DATE(c.date_start_time) = DATE(:date)
+    AND (SELECT COUNT(*) FROM inscriptions i WHERE i.classroom_id = c.id) < c.max_seats
+""";
+
+    private final static String CLASSROOMS_BY_USER_IN_DATE_RANGE = """
+    SELECT c.* FROM classrooms c
+    JOIN inscriptions i ON c.id = i.classroom_id
+    WHERE i.user_id = :userId
+    AND c.date_start_time BETWEEN :startDate AND :endDate
+""";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
@@ -95,5 +115,31 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     public List<Classroom> find(Map<String, ?> filters) {
         var sql = DBUtils.buildQuery(SELECT_CLASSROOMS, null);
         return jdbcTemplate.query(sql, DBUtils.mapFilters(filters), new ClassroomRowMapper(objectMapper));
+    }
+
+    //metodi per query personalizzate
+
+    @Override
+    public List<Classroom> findByUserAndDate(Long userId, LocalDateTime date) {
+        var params = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("date", date);
+        return jdbcTemplate.query(CLASSROOMS_BY_USER_AND_DATE, params, new ClassroomRowMapper(objectMapper));
+    }
+
+    @Override
+    public List<Classroom> findAvailableByDate(LocalDateTime date) {
+        var params = new MapSqlParameterSource()
+                .addValue("date", date);
+        return jdbcTemplate.query(AVAILABLE_CLASSROOMS_BY_DATE, params, new ClassroomRowMapper(objectMapper));
+    }
+
+    @Override
+    public List<Classroom> findByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+        var params = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("startDate", startDate)
+                .addValue("endDate", endDate);
+        return jdbcTemplate.query(CLASSROOMS_BY_USER_IN_DATE_RANGE, params, new ClassroomRowMapper(objectMapper));
     }
 }

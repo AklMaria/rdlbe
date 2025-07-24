@@ -7,6 +7,7 @@ import com.rdlbe.application.views.ClassroomUpdateItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,33 @@ public class ClassroomRestController {
     @DeleteMapping("/{id}")
     public void deleteClassroom(@PathVariable("id") Long id) {
         classroomService.deleteClassroom(id);
+    }
+
+    // --- Query personalizzate ---
+
+    // 1. Aule di un utente in una data
+    @GetMapping("/by-user-date")
+    public List<ClassroomItem> getClassroomsByUserAndDate(@RequestParam("userId") Long userId,
+                                                          @RequestParam("date") String date) {
+        LocalDateTime parsedDate = LocalDateTime.parse(date);
+        return classroomService.getClassroomsByUserAndDate(userId, parsedDate);
+    }
+
+    // 2. Aule disponibili in una data
+    @GetMapping("/available")
+    public List<ClassroomItem> getAvailableClassroomsByDate(@RequestParam("date") String date) {
+        LocalDateTime parsedDate = LocalDateTime.parse(date);
+        return classroomService.getAvailableClassroomsByDate(parsedDate);
+    }
+
+    // 3. Aule di un utente in un intervallo di date
+    @GetMapping("/by-user-daterange")
+    public List<ClassroomItem> getClassroomsByUserInDateRange(@RequestParam("userId") Long userId,
+                                                              @RequestParam("startDate") String startDate,
+                                                              @RequestParam("endDate") String endDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate);
+        LocalDateTime end = LocalDateTime.parse(endDate);
+        return classroomService.getClassroomsByUserInDateRange(userId, start, end);
     }
 
 }
