@@ -30,3 +30,7 @@ CREATE TABLE utenti_classi (
         FOREIGN KEY (utente_id) REFERENCES utenti(id) ON DELETE CASCADE,
         FOREIGN KEY (classe_id) REFERENCES classi(id) ON DELETE CASCADE
 );
+
+INSERT INTO classi (titolo, descrizione, data_ora_inizio, data_ora_fine) VALUES ('Informatica', 'Classe di Informatica', null, null)
+
+INSERT INTO utenti (nome, email, data_nascita, ruolo) VALUES ('Maria', 'maria.akl@gmail.com', null, 'ADMIN')
