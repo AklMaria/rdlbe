@@ -18,6 +18,7 @@ public class Classroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String description;
     private Integer maxSeats;
@@ -30,7 +31,6 @@ public class Classroom {
     private LocalDateTime dateEndTime;
 
     @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // Evita cicli infiniti nel toString
     private Set<Inscription> inscriptions;
-
-
 }
