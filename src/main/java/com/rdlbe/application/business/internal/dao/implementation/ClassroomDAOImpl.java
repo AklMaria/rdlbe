@@ -114,6 +114,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     @Override
     public List<Classroom> find(Map<String, ?> filters) {
         var sql = DBUtils.buildQuery(SELECT_CLASSROOMS, null);
+        log.debug(sql);
         return jdbcTemplate.query(sql, DBUtils.mapFilters(filters), new ClassroomRowMapper(objectMapper));
     }
 

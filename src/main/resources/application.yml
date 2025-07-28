@@ -5,6 +5,7 @@
 #DB_DRIVER: org.postgresql.Driver
 
 server:
+  port: 8082
   servlet:
     context-path: /api
 
@@ -12,22 +13,9 @@ spring:
   application:
     name: scartobl
 
-#  datasource:
-#    url: ${DB_URL:jdbc:postgresql://localhost:5432/rdldb}
-#    username: admin
-#    password: admin
-#    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
-
-  #jpa configuration
   jpa:
     hibernate:
       ddl-auto: none
-
-  # jpa configuration
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
 
   caching:
     messages: 900000
@@ -35,5 +23,5 @@ spring:
 logging:
   level:
     root: "warn"
-    it.doqui.theca: "debug"
+    com.rdlbe: "debug"
     org.springframework.jdbc.core: "TRACE"

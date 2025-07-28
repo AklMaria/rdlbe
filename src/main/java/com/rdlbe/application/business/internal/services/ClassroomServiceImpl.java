@@ -3,9 +3,8 @@ package com.rdlbe.application.business.internal.services;
 import com.rdlbe.application.business.internal.dao.presentation.ClassroomDAO;
 import com.rdlbe.application.business.internal.domains.Classroom;
 import com.rdlbe.application.business.publishing.ClassroomService;
-import com.rdlbe.application.views.ClassroomInsertItem;
 import com.rdlbe.application.views.ClassroomItem;
-import com.rdlbe.application.views.ClassroomUpdateItem;
+import com.rdlbe.application.views.ClassroomRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -32,6 +31,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     private void init() {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.typeMap(Classroom.class, ClassroomItem.class);
+        modelMapper.typeMap(ClassroomItem.class, Classroom.class);
+        modelMapper.typeMap(Classroom.class, ClassroomRequest.class);
+        modelMapper.typeMap(ClassroomRequest.class, Classroom.class);
     }
 
 
@@ -43,6 +45,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .stream()
                 .map(b -> modelMapper.map(b, ClassroomItem.class))
                 .toList();
+        log.debug(items.toString());
         return items;
     }
 
@@ -53,16 +56,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public ClassroomItem createClassroom(ClassroomInsertItem classroomDto) {
+    public ClassroomItem createClassroom(ClassroomItem classroomDto) {
         // Mappa il DTO in entità
         Classroom classroom = modelMapper.map(classroomDto, Classroom.class);
+        log.info("Mapped Classroom before insert: {}", classroom); // <-- logga tutti i campi
+
         Long id = classroomDAO.create(classroom); // Il DAO deve restituire l'ID creato
         classroom.setId(id);
         return modelMapper.map(classroom, ClassroomItem.class);
     }
 
     @Override
-    public ClassroomItem updateClassroom(Long id, ClassroomUpdateItem classroomDto) {
+    public ClassroomItem updateClassroom(Long id, ClassroomRequest classroomDto) {
         Classroom classroom = modelMapper.map(classroomDto, Classroom.class);
         classroom.setId(id);
         classroomDAO.update(classroom);

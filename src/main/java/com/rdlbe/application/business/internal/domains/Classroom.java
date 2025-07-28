@@ -30,7 +30,7 @@ public class Classroom {
     @Column(name = "date_end_time")
     private LocalDateTime dateEndTime;
 
-    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude // Evita cicli infiniti nel toString
-    private Set<Inscription> inscriptions;
+   // @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
+  //  @ToString.Exclude // Evita cicli infiniti nel toString
+   // private Set<Inscription> inscriptions;
 }
