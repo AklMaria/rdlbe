@@ -22,6 +22,4 @@ public class ClassroomItem {
     private Boolean isActive;
     private LocalDateTime dateStartTime;
     private LocalDateTime dateEndTime;
-
-
 }

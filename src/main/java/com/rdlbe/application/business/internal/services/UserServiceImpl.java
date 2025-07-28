@@ -1,14 +1,10 @@
 package com.rdlbe.application.business.internal.services;
 
-import com.rdlbe.application.business.internal.dao.presentation.ClassroomDAO;
 import com.rdlbe.application.business.internal.dao.presentation.UserDAO;
-import com.rdlbe.application.business.internal.domains.Classroom;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.publishing.UserService;
-import com.rdlbe.application.views.ClassroomItem;
-import com.rdlbe.application.views.UserInsertItem;
 import com.rdlbe.application.views.UserItem;
-import com.rdlbe.application.views.UserUpdateItem;
+import com.rdlbe.application.views.UserRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -47,12 +43,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserItem createUser(UserInsertItem user) {
+    public UserItem createUser(UserRequest user) {
         return null;
     }
 
     @Override
-    public UserItem updateUser(Long id, UserUpdateItem user) {
+    public UserItem updateUser(Long id, UserRequest user) {
         return null;
     }
 

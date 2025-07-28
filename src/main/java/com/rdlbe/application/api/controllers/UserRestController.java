@@ -1,9 +1,8 @@
 package com.rdlbe.application.api.controllers;
 
 import com.rdlbe.application.business.publishing.UserService;
-import com.rdlbe.application.views.UserInsertItem;
 import com.rdlbe.application.views.UserItem;
-import com.rdlbe.application.views.UserUpdateItem;
+import com.rdlbe.application.views.UserRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,14 +36,14 @@ public class UserRestController {
 
         // --- POST: crea utente ---
         @PostMapping
-        public UserItem createUser(@RequestBody UserInsertItem user) {
+        public UserItem createUser(@RequestBody UserRequest user) {
             return userService.createUser(user);
         }
 
         // --- PUT: aggiorna utente ---
         @PutMapping("/{id}")
         public UserItem updateUser(@PathVariable("id") Long id,
-                                   @RequestBody UserUpdateItem user) {
+                                   @RequestBody UserRequest user) {
             return userService.updateUser(id, user);
         }
 
