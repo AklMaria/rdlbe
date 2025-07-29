@@ -59,8 +59,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserItem createUser(UserRequest userDto) {
         User user = modelMapper.map(userDto, User.class);
-        // Log di debug per controllare i valori mappati
-        log.info("Mapped User before insert: {}", user);
         Long id = userDAO.create(user);
         user.setId(id);
         return modelMapper.map(user, UserItem.class);

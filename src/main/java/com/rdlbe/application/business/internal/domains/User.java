@@ -32,6 +32,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(nullable = false)
+    private Boolean state = false;  // default true
+
+    @Column(nullable = false)
+    private Integer credits = 0;   // default 0
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

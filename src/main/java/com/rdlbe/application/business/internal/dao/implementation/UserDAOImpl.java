@@ -20,18 +20,21 @@ public class UserDAOImpl implements UserDAO {
     private final static String SELECT_USERS = "SELECT u.* FROM users u";
     private final static String FIND_BY_ID = "SELECT u.* FROM users u WHERE u.id = :id";
     private final static String INSERT_USER = """
-        INSERT INTO users (username, email, birth_date, role)
-        VALUES (:username, :email, :birth_date, :role)
-        RETURNING id
-    """;
+    INSERT INTO users (username, email, birth_date, role, state, credits)
+    VALUES (:username, :email, :birth_date, :role, :state, :credits)
+    RETURNING id
+""";
+
     private final static String UPDATE_USER = """
-        UPDATE users
-        SET username = :username,
-            email = :email,
-            birth_date = :birth_date,
-            role = :role
-        WHERE id = :id
-    """;
+    UPDATE users
+    SET username = :username,
+        email = :email,
+        birth_date = :birth_date,
+        role = :role,
+        state = :state,
+        credits = :credits
+    WHERE id = :id
+""";
     private final static String DELETE_USER = "DELETE FROM users WHERE id = :id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -48,7 +51,10 @@ public class UserDAOImpl implements UserDAO {
                 .addValue("username", entity.getUsername())
                 .addValue("email", entity.getEmail())
                 .addValue("birth_date", entity.getBirthDate())
-                .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name());
+                .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())
+                .addValue("state", entity.getState())
+                .addValue("credits", entity.getCredits());
+
         return jdbcTemplate.queryForObject(INSERT_USER, params, Long.class);
     }
 
@@ -59,7 +65,10 @@ public class UserDAOImpl implements UserDAO {
                 .addValue("username", entity.getUsername())
                 .addValue("email", entity.getEmail())
                 .addValue("birth_date", entity.getBirthDate())
-                .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name());
+                .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())
+                .addValue("state", entity.getState())
+                .addValue("credits", entity.getCredits());
+
         jdbcTemplate.update(UPDATE_USER, params);
     }
 

@@ -25,21 +25,14 @@ public interface UserDAO extends Dao<User, Long> {
     static MapSqlParameterSource params(User user, ObjectMapper mapper) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", user.getId());
-        if (user.getUsername() != null) {
-            params.put("username", user.getUsername());
-        }
-        if (user.getEmail() != null) {
-            params.put("email", user.getEmail());
-        }
-        if (user.getBirthDate() != null) {
-            params.put("birth_date", user.getBirthDate());
-        }
-        if (user.getRole() != null) {
-            params.put("role", user.getRole().name());  // Enum -> String
-        }
+        if (user.getUsername() != null) params.put("username", user.getUsername());
+        if (user.getEmail() != null) params.put("email", user.getEmail());
+        if (user.getBirthDate() != null) params.put("birth_date", user.getBirthDate());
+        if (user.getRole() != null) params.put("role", user.getRole().name());
+        if (user.getState() != null) params.put("state", user.getState());
+        if (user.getCredits() != null) params.put("credits", user.getCredits());
         return new MapSqlParameterSource(params);
     }
-
     class UserRowMapper implements RowMapper<User> {
         final ObjectMapper objectMapper;
 
@@ -61,6 +54,10 @@ public interface UserDAO extends Dao<User, Long> {
             if (roleString != null) {
                 user.setRole(User.Role.valueOf(roleString));  // String -> Enum
             }
+            // Nuovi campi
+            user.setState(rs.getBoolean("state"));
+            int credits = rs.getInt("credits");
+            user.setCredits(rs.wasNull() ? 0 : credits);
             return user;
         }
     }
