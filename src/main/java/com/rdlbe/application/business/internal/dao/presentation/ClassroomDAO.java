@@ -27,7 +27,7 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
     static MapSqlParameterSource params(Classroom classroom, ObjectMapper mapper) {
         // The parameters are mapped to the named parameters in the SQL statement.
         Map<String, Object> params = new HashMap<>();
-        params.put("idclassroom", classroom.getId());
+        params.put("id", classroom.getId());
         if (classroom.getName() != null) {
             params.put("name", classroom.getName());
         }

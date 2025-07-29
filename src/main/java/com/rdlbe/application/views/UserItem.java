@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -19,7 +19,7 @@ public class UserItem {
     private Long id;
     private String username;
     private String email;
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;  // Cambiato da LocalDateTime a LocalDate
     private User.Role role;
     // private Set<Inscription> inscriptions;
 }

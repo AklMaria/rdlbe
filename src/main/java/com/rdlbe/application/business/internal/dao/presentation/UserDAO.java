@@ -24,7 +24,7 @@ public interface UserDAO extends Dao<User, Long> {
 
     static MapSqlParameterSource params(User user, ObjectMapper mapper) {
         Map<String, Object> params = new HashMap<>();
-        params.put("iduser", user.getId());
+        params.put("id", user.getId());
         if (user.getUsername() != null) {
             params.put("username", user.getUsername());
         }

@@ -1,11 +1,17 @@
 package com.rdlbe.application.views;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.rdlbe.application.business.internal.domains.User;
+import lombok.Data;
 
+
+import java.time.LocalDate;
+
+
+
+@Data
 public class UserRequest {
-    private Optional<String> username;
-    private Optional<String> email;
-    private Optional<LocalDateTime> birthDate;
-    private Optional<String> role;
+    private String username;
+    private String email;
+    private LocalDate birthDate;
+    private User.Role role;  // Deve essere "USER" o "ADMIN"
 }
