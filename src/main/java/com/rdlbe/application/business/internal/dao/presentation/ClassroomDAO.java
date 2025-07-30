@@ -49,15 +49,12 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
             classroom.setId(rs.getLong("id"));
             classroom.setName(rs.getString("name"));
             classroom.setDescription(rs.getString("description"));
-
-            //TODO: nel caso in cui l'oggetto Classroom avesse altri oggetti da mappare aggiungi qui
-            // per esempio:
-            // Utente utente = new Utente();
-            // utente.setId(rs.getLong("id_utente"));
-            // utente.setNome(rs.getString("nome_utente"));
-            // utente.setCognome(rs.getString("cognome_utente"));
-            // classroom.setUtenteInserimento(utente);
-
+            classroom.setMaxSeats(rs.getInt("max_seats"));
+            classroom.setIsActive(rs.getBoolean("is_active"));
+            var startDate = rs.getTimestamp("date_start_time");
+            var endDate = rs.getTimestamp("date_end_time");
+            if (startDate != null) classroom.setDateStartTime(startDate.toLocalDateTime());
+            if (endDate != null) classroom.setDateEndTime(endDate.toLocalDateTime());
             return classroom;
         }
     }
