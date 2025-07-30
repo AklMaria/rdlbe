@@ -2,6 +2,7 @@ package com.rdlbe.application.business.publishing;
 
 import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.ClassroomRequest;
+import com.rdlbe.application.views.ClassroomUsersDetailsItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,9 +17,12 @@ public interface ClassroomService {
     void deleteClassroom(Long id);
 
     //Query personalizzate
-    List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date);
-    List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date);
-    List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+   // List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date);
+   // List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date);
+   // List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+
+    //useful apis:
+    ClassroomUsersDetailsItem getClassroomUsersById(Long classroomId);
 
 
 }

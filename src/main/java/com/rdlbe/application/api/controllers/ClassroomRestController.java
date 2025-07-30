@@ -3,6 +3,7 @@ package com.rdlbe.application.api.controllers;
 import com.rdlbe.application.business.publishing.ClassroomService;
 import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.ClassroomRequest;
+import com.rdlbe.application.views.ClassroomUsersDetailsItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,28 +58,33 @@ public class ClassroomRestController {
     // --- Query personalizzate ---
 
     // 1. Aule di un utente in una data
-    @GetMapping("/by-user-date")
-    public List<ClassroomItem> getClassroomsByUserAndDate(@RequestParam("userId") Long userId,
-                                                          @RequestParam("date") String date) {
-        LocalDateTime parsedDate = LocalDateTime.parse(date);
-        return classroomService.getClassroomsByUserAndDate(userId, parsedDate);
-    }
+//    @GetMapping("/by-user-date")
+//    public List<ClassroomItem> getClassroomsByUserAndDate(@RequestParam("userId") Long userId,
+//                                                          @RequestParam("date") String date) {
+//        LocalDateTime parsedDate = LocalDateTime.parse(date);
+//        return classroomService.getClassroomsByUserAndDate(userId, parsedDate);
+//    }
 
     // 2. Aule disponibili in una data
-    @GetMapping("/available")
-    public List<ClassroomItem> getAvailableClassroomsByDate(@RequestParam("date") String date) {
-        LocalDateTime parsedDate = LocalDateTime.parse(date);
-        return classroomService.getAvailableClassroomsByDate(parsedDate);
-    }
+//    @GetMapping("/available")
+//    public List<ClassroomItem> getAvailableClassroomsByDate(@RequestParam("date") String date) {
+//        LocalDateTime parsedDate = LocalDateTime.parse(date);
+//        return classroomService.getAvailableClassroomsByDate(parsedDate);
+//    }
 
     // 3. Aule di un utente in un intervallo di date
-    @GetMapping("/by-user-daterange")
-    public List<ClassroomItem> getClassroomsByUserInDateRange(@RequestParam("userId") Long userId,
-                                                              @RequestParam("startDate") String startDate,
-                                                              @RequestParam("endDate") String endDate) {
-        LocalDateTime start = LocalDateTime.parse(startDate);
-        LocalDateTime end = LocalDateTime.parse(endDate);
-        return classroomService.getClassroomsByUserInDateRange(userId, start, end);
+//    @GetMapping("/by-user-daterange")
+//    public List<ClassroomItem> getClassroomsByUserInDateRange(@RequestParam("userId") Long userId,
+//                                                              @RequestParam("startDate") String startDate,
+//                                                              @RequestParam("endDate") String endDate) {
+//        LocalDateTime start = LocalDateTime.parse(startDate);
+//        LocalDateTime end = LocalDateTime.parse(endDate);
+//        return classroomService.getClassroomsByUserInDateRange(userId, start, end);
+//    }
+
+    @GetMapping("/{id}/users")
+    public ClassroomUsersDetailsItem getClassroomUsers(@PathVariable("id") Long id) {
+        return classroomService.getClassroomUsersById(id);
     }
 
 }

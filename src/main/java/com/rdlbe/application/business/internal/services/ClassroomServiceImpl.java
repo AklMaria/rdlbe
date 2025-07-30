@@ -1,10 +1,14 @@
 package com.rdlbe.application.business.internal.services;
 
 import com.rdlbe.application.business.internal.dao.presentation.ClassroomDAO;
+import com.rdlbe.application.business.internal.dao.presentation.InscriptionDAO;
 import com.rdlbe.application.business.internal.domains.Classroom;
+import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.publishing.ClassroomService;
 import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.ClassroomRequest;
+import com.rdlbe.application.views.ClassroomUsersDetailsItem;
+import com.rdlbe.application.views.UserSummary;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,9 +25,11 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     private final ClassroomDAO classroomDAO;
     private final ModelMapper modelMapper;
+    private final InscriptionDAO inscriptionDAO;
 
-    public ClassroomServiceImpl(ClassroomDAO classroomDAO, ModelMapper modelMapper) {
+    public ClassroomServiceImpl(ClassroomDAO classroomDAO, InscriptionDAO inscriptionDAO, ModelMapper modelMapper) {
         this.classroomDAO = classroomDAO;
+        this.inscriptionDAO = inscriptionDAO;
         this.modelMapper = modelMapper;
     }
 
@@ -79,32 +85,58 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroomDAO.delete(id, null); // se non serve idUtenteAggiornamento, passiamo null
     }
 
-    //Query personalizzate
-    @Override
-    public List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date) {
-        var classrooms = classroomDAO.findByUserAndDate(userId, date)
-                .stream()
-                .map(c -> modelMapper.map(c, ClassroomItem.class))
-                .toList();
-        return classrooms;
-    }
+//    //Query personalizzate
+//    @Override
+//    public List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date) {
+//        var classrooms = classroomDAO.findByUserAndDate(userId, date)
+//                .stream()
+//                .map(c -> modelMapper.map(c, ClassroomItem.class))
+//                .toList();
+//        return classrooms;
+//    }
+
+//    @Override
+//    public List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date) {
+//        var classrooms = classroomDAO.findAvailableByDate(date)
+//                .stream()
+//                .map(c -> modelMapper.map(c, ClassroomItem.class))
+//                .toList();
+//        return classrooms;
+//    }
+
+//    @Override
+//    public List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
+//        var classrooms = classroomDAO.findByUserInDateRange(userId, startDate, endDate)
+//                .stream()
+//                .map(c -> modelMapper.map(c, ClassroomItem.class))
+//                .toList();
+//        return classrooms;
+//    }
 
     @Override
-    public List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date) {
-        var classrooms = classroomDAO.findAvailableByDate(date)
-                .stream()
-                .map(c -> modelMapper.map(c, ClassroomItem.class))
-                .toList();
-        return classrooms;
-    }
+    public ClassroomUsersDetailsItem getClassroomUsersById(Long classroomId) {
+        Classroom classroom = classroomDAO.findById(classroomId)
+                .orElseThrow(() -> new RuntimeException("Classroom not found"));
 
-    @Override
-    public List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate) {
-        var classrooms = classroomDAO.findByUserInDateRange(userId, startDate, endDate)
-                .stream()
-                .map(c -> modelMapper.map(c, ClassroomItem.class))
-                .toList();
-        return classrooms;
+        // Utenti iscritti alla classroom
+        List<User> users = inscriptionDAO.findUsersByClassroom(classroomId);
+
+        ClassroomUsersDetailsItem dto = new ClassroomUsersDetailsItem();
+        dto.setClassroomId(classroom.getId());
+        dto.setName(classroom.getName());
+        dto.setDescription(classroom.getDescription());
+        dto.setTotalUsers(users.size());
+
+        List<UserSummary> summaries = users.stream().map(u -> {
+            UserSummary summary = new UserSummary();
+            summary.setId(u.getId());
+            summary.setUsername(u.getUsername());
+            summary.setEmail(u.getEmail());
+            return summary;
+        }).toList();
+
+        dto.setUsers(summaries);
+        return dto;
     }
 
 
