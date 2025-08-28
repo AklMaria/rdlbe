@@ -45,20 +45,27 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public List<ClassroomItem> getAllClassrooms() {
-        // Essendo una getAllClassrooms non servono filtri di ricerca.
-        // Se dovessero servirti filtri, devi mandarli dal Controller
-        var items = classroomDAO.find(null)
+        return classroomDAO.find(null)
                 .stream()
-                .map(b -> modelMapper.map(b, ClassroomItem.class))
+                .map(classroom -> {
+                    ClassroomItem dto = modelMapper.map(classroom, ClassroomItem.class);
+                    int enrolled = inscriptionDAO.countByClassroom(classroom.getId());
+                    int max = Optional.ofNullable(classroom.getMaxSeats()).orElse(0);
+                    dto.setAvailableSeats(Math.max(0, max - enrolled)); // protezione contro valori negativi
+                    return dto;
+                })
                 .toList();
-        log.debug(items.toString());
-        return items;
     }
-
     @Override
     public Optional<ClassroomItem> getClassroomById(Long id) {
         return classroomDAO.findById(id)
-                .map(classroom -> modelMapper.map(classroom, ClassroomItem.class));
+                .map(classroom -> {
+                    ClassroomItem dto = modelMapper.map(classroom, ClassroomItem.class);
+                    int enrolled = inscriptionDAO.countByClassroom(classroom.getId());
+                    int max = Optional.ofNullable(classroom.getMaxSeats()).orElse(0);
+                    dto.setAvailableSeats(Math.max(0, max - enrolled));
+                    return dto;
+                });
     }
 
     @Override

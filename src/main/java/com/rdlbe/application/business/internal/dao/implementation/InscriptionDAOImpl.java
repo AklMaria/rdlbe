@@ -25,6 +25,10 @@ public class InscriptionDAOImpl implements InscriptionDAO {
         WHERE i.classroom_id = :classroomId
     """;
 
+    private static final String COUNT_INSCRIPTIONS = """
+    SELECT COUNT(*) FROM inscriptions WHERE classroom_id = :classroomId
+""";
+
     public InscriptionDAOImpl(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
@@ -35,4 +39,13 @@ public class InscriptionDAOImpl implements InscriptionDAO {
         var params = new MapSqlParameterSource().addValue("classroomId", classroomId);
         return jdbcTemplate.query(SELECT_USERS_BY_CLASSROOM, params, new UserRowMapper(objectMapper));
     }
+
+
+
+    @Override
+    public int countByClassroom(Long classroomId) {
+        var params = new MapSqlParameterSource("classroomId", classroomId);
+        return jdbcTemplate.queryForObject(COUNT_INSCRIPTIONS, params, Integer.class);
+    }
+
 }

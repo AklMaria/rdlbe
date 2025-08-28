@@ -8,4 +8,6 @@ import java.util.List;
 @Repository
 public interface InscriptionDAO {
     List<User> findUsersByClassroom(Long classroomId);
+    int countByClassroom(Long classroomId);
+
 }

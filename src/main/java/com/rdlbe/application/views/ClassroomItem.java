@@ -21,6 +21,7 @@ public class ClassroomItem {
     private String name;
     private String description;
     private Integer maxSeats;
+    private Integer availableSeats;
     private Boolean isActive;
     private LocalDate date;
    // private LocalDateTime dateEndTime;
