@@ -62,6 +62,7 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
         }
     }
 
+    List<Classroom> findClassroomsByUser(Long userId);
 
     List<Classroom> findByUserAndDate(Long userId, LocalDateTime date);
     List<Classroom> findAvailableByDate(LocalDateTime date);

@@ -1,9 +1,12 @@
 package com.rdlbe.application.api.controllers;
 
 import com.rdlbe.application.business.publishing.InscriptionService;
+import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.InscriptionRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/inscriptions")
@@ -26,5 +29,9 @@ public class InscriptionRestController {
     public void unregisterUserFromClassroom(@RequestParam Long userId, @RequestParam Long classroomId) {
         inscriptionService.unregisterUserFromClassroom(userId, classroomId);
     }
+
+
+
+
 
 }

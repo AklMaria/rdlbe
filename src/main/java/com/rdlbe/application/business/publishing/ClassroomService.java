@@ -16,6 +16,6 @@ public interface ClassroomService {
     ClassroomItem updateClassroom(Long id, ClassroomRequest classroom);
     void deleteClassroom(Long id);
     ClassroomUsersDetailsItem getClassroomUsersById(Long classroomId);
-
+    List<ClassroomItem> getClassroomsByUser(Long userId);
 
 }

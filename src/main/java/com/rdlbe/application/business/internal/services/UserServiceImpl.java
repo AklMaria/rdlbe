@@ -12,7 +12,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -75,5 +77,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         userDAO.delete(id, null);
+    }
+
+    @Override
+    public Optional<UserItem> login(String username, String rawPassword) {
+        Optional<User> userOpt = userDAO.findByUsername(username);
+        return Optional.of(modelMapper.map(userOpt, UserItem.class));
+//        if (userOpt.isPresent()) {
+//            User user = userOpt.get();
+//            if (BCrypt.checkpw(rawPassword, user.getPassword())) {
+//
+//            }
+//        }
+
+       // return Optional.empty(); // login fallito
     }
 }

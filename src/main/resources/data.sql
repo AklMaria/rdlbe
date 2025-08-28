@@ -37,3 +37,7 @@ ALTER TABLE classrooms ADD COLUMN duration integer;
 
 ALTER TABLE classrooms ADD COLUMN link TEXT;
 
+ALTER TABLE users ADD COLUMN password TEXT NOT NULL DEFAULT '';
+
+
+

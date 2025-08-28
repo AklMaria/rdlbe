@@ -92,6 +92,16 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroomDAO.delete(id, null); // se non serve idUtenteAggiornamento, passiamo null
     }
 
+
+    @Override
+    public List<ClassroomItem> getClassroomsByUser(Long userId) {
+        List<Classroom> classrooms = classroomDAO.findClassroomsByUser(userId);
+        return classrooms.stream()
+                .map(c -> modelMapper.map(c, ClassroomItem.class))
+                .toList();
+    }
+
+
 //    //Query personalizzate
 //    @Override
 //    public List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date) {

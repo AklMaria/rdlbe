@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface UserDAO extends Dao<User, Long> {
@@ -45,6 +46,8 @@ public interface UserDAO extends Dao<User, Long> {
             var user = new User();
             user.setId(rs.getLong("id"));
             user.setUsername(rs.getString("username"));
+            user.setPassword(rs.getString("password"));
+
             user.setEmail(rs.getString("email"));
             var birthDate = rs.getDate("birth_date");
             if (birthDate != null) {
@@ -60,5 +63,9 @@ public interface UserDAO extends Dao<User, Long> {
             user.setCredits(rs.wasNull() ? 0 : credits);
             return user;
         }
+
+
+
     }
+    Optional<User> findByUsername(String username);
 }

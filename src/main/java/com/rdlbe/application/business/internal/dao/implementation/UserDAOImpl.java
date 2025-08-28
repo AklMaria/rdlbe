@@ -25,6 +25,7 @@ public class UserDAOImpl implements UserDAO {
     RETURNING id
 """;
 
+    private static final String FIND_BY_USERNAME = "SELECT * FROM users WHERE username = :username";
     private final static String UPDATE_USER = """
     UPDATE users
     SET username = :username,
@@ -96,4 +97,14 @@ public class UserDAOImpl implements UserDAO {
         var sql = DBUtils.buildQuery(SELECT_USERS, null);
         return jdbcTemplate.query(sql, DBUtils.mapFilters(filters), new UserDAO.UserRowMapper(objectMapper));
     }
+
+
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        var params = new MapSqlParameterSource().addValue("username", username);
+        var results = jdbcTemplate.query(FIND_BY_USERNAME, params, new UserRowMapper(objectMapper));
+        return results.stream().findFirst();
+    }
+
 }

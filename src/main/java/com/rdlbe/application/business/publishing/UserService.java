@@ -12,4 +12,6 @@ public interface UserService {
     UserItem createUser(UserRequest user);
     UserItem updateUser(Long id, UserRequest user);
     void deleteUser(Long id);
+    Optional<UserItem> login(String username, String rawPassword);
+
 }

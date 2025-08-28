@@ -1,9 +1,13 @@
 package com.rdlbe.application.api.controllers;
 
 import com.rdlbe.application.business.publishing.UserService;
+import com.rdlbe.application.views.LoginRequest;
 import com.rdlbe.application.views.UserItem;
 import com.rdlbe.application.views.UserRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,5 +56,13 @@ public class UserRestController {
         public void deleteUser(@PathVariable("id") Long id) {
             userService.deleteUser(id);
         }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserItem> login(@RequestBody LoginRequest request) {
+        return userService.login(request.getUsername(), request.getPassword())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
+    }
+
 }
 

@@ -8,9 +8,12 @@ import com.rdlbe.application.business.internal.domains.Inscription;
 import com.rdlbe.application.business.internal.domains.InscriptionId;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.publishing.InscriptionService;
+import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.InscriptionRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -56,5 +59,7 @@ public class InscriptionServiceImpl implements InscriptionService {
     public void unregisterUserFromClassroom(Long userId, Long classroomId) {
         inscriptionDAO.delete(userId, classroomId);
     }
+
+
 
 }

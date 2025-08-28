@@ -59,6 +59,13 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     AND c.date_start_time BETWEEN :startDate AND :endDate
 """;
 
+    private static final String SELECT_CLASSROOMS_BY_USER = """
+    SELECT c.*
+    FROM classrooms c
+    JOIN inscriptions i ON c.id = i.classroom_id
+    WHERE i.user_id = :userId
+""";
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
@@ -151,4 +158,19 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("endDate", endDate);
         return jdbcTemplate.query(CLASSROOMS_BY_USER_IN_DATE_RANGE, params, new ClassroomRowMapper(objectMapper));
     }
+
+
+
+
+    @Override
+    public List<Classroom> findClassroomsByUser(Long userId) {
+        var params = new MapSqlParameterSource().addValue("userId", userId);
+        return jdbcTemplate.query(SELECT_CLASSROOMS_BY_USER, params, new ClassroomDAO.ClassroomRowMapper(objectMapper));
+    }
+
+
+
+
+
+
 }

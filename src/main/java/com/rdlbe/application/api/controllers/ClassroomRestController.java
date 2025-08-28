@@ -55,6 +55,12 @@ public class ClassroomRestController {
         classroomService.deleteClassroom(id);
     }
 
+    @GetMapping("/inscriptions/{userId}")
+    public List<ClassroomItem> getClassroomsByUser(@PathVariable Long userId) {
+        return classroomService.getClassroomsByUser(userId);
+    }
+
+
     // --- Query personalizzate ---
 
     // 1. Aule di un utente in una data
