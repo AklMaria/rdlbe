@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -20,6 +22,8 @@ public class ClassroomItem {
     private String description;
     private Integer maxSeats;
     private Boolean isActive;
-    private LocalDateTime dateStartTime;
-    private LocalDateTime dateEndTime;
+    private LocalDate date;
+   // private LocalDateTime dateEndTime;
+    private LocalTime time;
+    private Integer duration;
 }

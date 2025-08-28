@@ -28,7 +28,7 @@ public interface UserDAO extends Dao<User, Long> {
         if (user.getUsername() != null) params.put("username", user.getUsername());
         if (user.getEmail() != null) params.put("email", user.getEmail());
         if (user.getBirthDate() != null) params.put("birth_date", user.getBirthDate());
-        if (user.getRole() != null) params.put("role", user.getRole().name());
+        if (user.getRole() != null) params.put("role", user.getRole().name().toLowerCase());
         if (user.getState() != null) params.put("state", user.getState());
         if (user.getCredits() != null) params.put("credits", user.getCredits());
         return new MapSqlParameterSource(params);

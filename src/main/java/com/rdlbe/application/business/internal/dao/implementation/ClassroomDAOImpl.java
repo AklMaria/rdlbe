@@ -21,8 +21,8 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 
     private final static String SELECT_CLASSROOMS = "SELECT c.* FROM classrooms c";
     private final static String INSERT_CLASSROOM = """
-        INSERT INTO classrooms (name, description, max_seats, is_active, date_start_time, date_end_time)
-        VALUES (:name, :description, :maxSeats, :isActive, :dateStartTime, :dateEndTime)
+        INSERT INTO classrooms (name, description, max_seats, is_active, date, time,duration)
+        VALUES (:name, :description, :maxSeats, :isActive, :date, :time, :duration)
         RETURNING id
     """;
     private final static String UPDATE_CLASSROOM = """
@@ -31,8 +31,9 @@ public class ClassroomDAOImpl implements ClassroomDAO {
             description = :description,
             max_seats = :maxSeats,
             is_active = :isActive,
-            date_start_time = :dateStartTime,
-            date_end_time = :dateEndTime
+            date = :date,
+            time = :time,
+            duration = :duration
         WHERE id = :id
     """;
     private final static String DELETE_CLASSROOM = "DELETE FROM classrooms WHERE id = :id";
@@ -72,8 +73,10 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("description", entity.getDescription())
                 .addValue("maxSeats", entity.getMaxSeats())
                 .addValue("isActive", entity.getIsActive())
-                .addValue("dateStartTime", entity.getDateStartTime())
-                .addValue("dateEndTime", entity.getDateEndTime());
+                .addValue("date", entity.getDate())
+                .addValue("time", entity.getTime())
+                .addValue("duration", entity.getDuration());
+               // .addValue("dateEndTime", entity.getDateEndTime());
 
         return jdbcTemplate.queryForObject(INSERT_CLASSROOM, params, Long.class);
     }
@@ -86,8 +89,10 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("description", entity.getDescription())
                 .addValue("maxSeats", entity.getMaxSeats())
                 .addValue("isActive", entity.getIsActive())
-                .addValue("dateStartTime", entity.getDateStartTime())
-                .addValue("dateEndTime", entity.getDateEndTime());
+                .addValue("date", entity.getDate())
+                .addValue("time", entity.getTime())
+                .addValue("duration", entity.getDuration());
+               // .addValue("dateEndTime", entity.getDateEndTime());
 
         jdbcTemplate.update(UPDATE_CLASSROOM, params);
     }

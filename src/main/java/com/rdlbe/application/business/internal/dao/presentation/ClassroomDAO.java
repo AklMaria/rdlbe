@@ -51,10 +51,12 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
             classroom.setDescription(rs.getString("description"));
             classroom.setMaxSeats(rs.getInt("max_seats"));
             classroom.setIsActive(rs.getBoolean("is_active"));
-            var startDate = rs.getTimestamp("date_start_time");
-            var endDate = rs.getTimestamp("date_end_time");
-            if (startDate != null) classroom.setDateStartTime(startDate.toLocalDateTime());
-            if (endDate != null) classroom.setDateEndTime(endDate.toLocalDateTime());
+            classroom.setDate(rs.getDate("date").toLocalDate());
+            classroom.setTime(rs.getTime("time").toLocalTime());
+            classroom.setDuration(rs.getInt("duration"));
+
+            // var endDate = rs.getTimestamp("date_end_time");
+           // if (endDate != null) classroom.setDateEndTime(endDate.toLocalDateTime());
             return classroom;
         }
     }

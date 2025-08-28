@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Getter
@@ -20,6 +22,8 @@ public class ClassroomRequest {
     private Optional<String> description;
     private Optional<Integer> maxSeats;
     private Optional<Boolean> isActive;
-    private Optional<LocalDateTime> dateStartTime;
-    private Optional<LocalDateTime> dateEndTime;
+    private Optional<LocalDate> date;
+    private Optional<LocalTime> time;
+    private Optional<Integer> duration;
+  //  private Optional<LocalDateTime> dateEndTime;
 }

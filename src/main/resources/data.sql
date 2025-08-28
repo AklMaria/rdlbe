@@ -28,3 +28,9 @@ ALTER TABLE users RENAME COLUMN crediti TO credits;
 INSERT INTO classrooms (titolo, descrizione, data_ora_inizio, data_ora_fine) VALUES ('Informatica', 'Classe di Informatica', null, null)
 
 INSERT INTO users (nome, email, data_nascita, ruolo) VALUES ('Maria', 'maria.akl@gmail.com', null, 'ADMIN')
+
+
+ALTER TABLE classrooms RENAME COLUMN date_start_time TO date;
+ALTER TABLE classrooms ALTER COLUMN date TYPE DATE;
+ALTER TABLE classrooms ADD COLUMN time TIME;
+ALTER TABLE classrooms ADD COLUMN duration integer;

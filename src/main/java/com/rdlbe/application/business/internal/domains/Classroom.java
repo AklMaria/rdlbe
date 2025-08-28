@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
 
 
@@ -24,10 +27,16 @@ public class Classroom {
     private Integer maxSeats;
     private Boolean isActive;
 
-    @Column(name = "date_start_time")
-    private LocalDateTime dateStartTime;
+    @Column(name = "date")
+    private LocalDate date;
 
-    @Column(name = "date_end_time")
-    private LocalDateTime dateEndTime;
+    @Column(name ="time")
+    private LocalTime time;
+
+    @Column (name = "duration")
+    private Integer duration;
+
+//    @Column(name = "date_end_time")
+//    private LocalDateTime dateEndTime;
 
 }
