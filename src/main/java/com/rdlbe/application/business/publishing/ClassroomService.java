@@ -15,13 +15,6 @@ public interface ClassroomService {
     ClassroomItem createClassroom(ClassroomItem classroom);
     ClassroomItem updateClassroom(Long id, ClassroomRequest classroom);
     void deleteClassroom(Long id);
-
-    //Query personalizzate
-   // List<ClassroomItem> getClassroomsByUserAndDate(Long userId, LocalDateTime date);
-   // List<ClassroomItem> getAvailableClassroomsByDate(LocalDateTime date);
-   // List<ClassroomItem> getClassroomsByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate);
-
-    //useful apis:
     ClassroomUsersDetailsItem getClassroomUsersById(Long classroomId);
 
 

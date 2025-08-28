@@ -2,6 +2,7 @@ package com.rdlbe.application.business.internal.dao.implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rdlbe.application.business.internal.dao.presentation.InscriptionDAO;
+import com.rdlbe.application.business.internal.domains.Inscription;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.internal.dao.presentation.UserDAO.UserRowMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,12 @@ public class InscriptionDAOImpl implements InscriptionDAO {
     SELECT COUNT(*) FROM inscriptions WHERE classroom_id = :classroomId
 """;
 
+    String INSCRIPTION_USER = """
+        INSERT INTO inscriptions (user_id, classroom_id, registration)
+        VALUES (:userId, :classroomId, :registration)
+    """;
+
+
     public InscriptionDAOImpl(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
@@ -47,5 +54,32 @@ public class InscriptionDAOImpl implements InscriptionDAO {
         var params = new MapSqlParameterSource("classroomId", classroomId);
         return jdbcTemplate.queryForObject(COUNT_INSCRIPTIONS, params, Integer.class);
     }
+
+
+
+    @Override
+    public void create(Inscription inscription) {
+
+        var params = new MapSqlParameterSource()
+                .addValue("userId", inscription.getId().getUserId())
+                .addValue("classroomId", inscription.getId().getClassroomId())
+                .addValue("registration", inscription.isRegistration());
+
+        jdbcTemplate.update(INSCRIPTION_USER, params);
+    }
+
+
+    @Override
+    public void delete(Long userId, Long classroomId) {
+        var params = new MapSqlParameterSource()
+                .addValue("userId", userId)
+                .addValue("classroomId", classroomId);
+
+        jdbcTemplate.update("""
+        DELETE FROM inscriptions
+        WHERE user_id = :userId AND classroom_id = :classroomId
+    """, params);
+    }
+
 
 }
