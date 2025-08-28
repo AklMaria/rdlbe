@@ -34,3 +34,6 @@ ALTER TABLE classrooms RENAME COLUMN date_start_time TO date;
 ALTER TABLE classrooms ALTER COLUMN date TYPE DATE;
 ALTER TABLE classrooms ADD COLUMN time TIME;
 ALTER TABLE classrooms ADD COLUMN duration integer;
+
+ALTER TABLE classrooms ADD COLUMN link TEXT;
+

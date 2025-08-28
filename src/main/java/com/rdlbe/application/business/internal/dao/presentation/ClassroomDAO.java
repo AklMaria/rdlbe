@@ -49,6 +49,7 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
             classroom.setId(rs.getLong("id"));
             classroom.setName(rs.getString("name"));
             classroom.setDescription(rs.getString("description"));
+            classroom.setLink(rs.getString("link"));
             classroom.setMaxSeats(rs.getInt("max_seats"));
             classroom.setIsActive(rs.getBoolean("is_active"));
             classroom.setDate(rs.getDate("date").toLocalDate());

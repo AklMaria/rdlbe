@@ -27,6 +27,10 @@ public class Classroom {
     private Integer maxSeats;
     private Boolean isActive;
 
+    @Column(name = "link")
+    private String link;
+
+
     @Column(name = "date")
     private LocalDate date;
 

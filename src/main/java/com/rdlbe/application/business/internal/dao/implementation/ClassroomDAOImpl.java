@@ -21,14 +21,15 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 
     private final static String SELECT_CLASSROOMS = "SELECT c.* FROM classrooms c";
     private final static String INSERT_CLASSROOM = """
-        INSERT INTO classrooms (name, description, max_seats, is_active, date, time,duration)
-        VALUES (:name, :description, :maxSeats, :isActive, :date, :time, :duration)
+        INSERT INTO classrooms (name, description, link,max_seats, is_active, date, time,duration)
+        VALUES (:name, :description, :link, :maxSeats, :isActive, :date, :time, :duration)
         RETURNING id
     """;
     private final static String UPDATE_CLASSROOM = """
         UPDATE classrooms
         SET name = :name,
             description = :description,
+            link = :link,
             max_seats = :maxSeats,
             is_active = :isActive,
             date = :date,
@@ -71,6 +72,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
         var params = new MapSqlParameterSource()
                 .addValue("name", entity.getName())
                 .addValue("description", entity.getDescription())
+                .addValue("link", entity.getLink())
                 .addValue("maxSeats", entity.getMaxSeats())
                 .addValue("isActive", entity.getIsActive())
                 .addValue("date", entity.getDate())
@@ -87,6 +89,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("id", entity.getId())
                 .addValue("name", entity.getName())
                 .addValue("description", entity.getDescription())
+                .addValue("link", entity.getLink())
                 .addValue("maxSeats", entity.getMaxSeats())
                 .addValue("isActive", entity.getIsActive())
                 .addValue("date", entity.getDate())
