@@ -18,6 +18,8 @@ public class UserItem {
 
     private Long id;
     private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private LocalDate birthDate;  // Cambiato da LocalDateTime a LocalDate
     private User.Role role;

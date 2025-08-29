@@ -20,8 +20,8 @@ public class UserDAOImpl implements UserDAO {
     private final static String SELECT_USERS = "SELECT u.* FROM users u";
     private final static String FIND_BY_ID = "SELECT u.* FROM users u WHERE u.id = :id";
     private final static String INSERT_USER = """
-    INSERT INTO users (username, email, birth_date, role, state, credits)
-    VALUES (:username, :email, :birth_date, :role, :state, :credits)
+    INSERT INTO users (username,first_name, last_name, email, birth_date, role, state, credits)
+    VALUES (:username,:first_name, :last_name, :email, :birth_date, :role, :state, :credits)
     RETURNING id
 """;
 
@@ -33,7 +33,9 @@ public class UserDAOImpl implements UserDAO {
         birth_date = :birth_date,
         role = :role,
         state = :state,
-        credits = :credits
+        credits = :credits,
+        first_name = :first_name,
+        last_name = :last_name
     WHERE id = :id
 """;
     private final static String DELETE_USER = "DELETE FROM users WHERE id = :id";
@@ -50,6 +52,8 @@ public class UserDAOImpl implements UserDAO {
     public Long create(User entity) {
         var params = new MapSqlParameterSource()
                 .addValue("username", entity.getUsername())
+                .addValue("first_name", entity.getFirstName())
+                .addValue("last_name", entity.getLastName())
                 .addValue("email", entity.getEmail())
                 .addValue("birth_date", entity.getBirthDate())
                 .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())
@@ -64,6 +68,8 @@ public class UserDAOImpl implements UserDAO {
         var params = new MapSqlParameterSource()
                 .addValue("id", entity.getId())
                 .addValue("username", entity.getUsername())
+                .addValue("first_name", entity.getFirstName())
+                .addValue("last_name", entity.getLastName())
                 .addValue("email", entity.getEmail())
                 .addValue("birth_date", entity.getBirthDate())
                 .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())

@@ -22,6 +22,13 @@ public class User {
 
     private String username;
 
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+
     private String password;
 
     @Column(unique = true, nullable = false)

@@ -32,6 +32,14 @@ public interface UserDAO extends Dao<User, Long> {
         if (user.getRole() != null) params.put("role", user.getRole().name().toLowerCase());
         if (user.getState() != null) params.put("state", user.getState());
         if (user.getCredits() != null) params.put("credits", user.getCredits());
+        if (user.getFirstName() != null) {
+            params.put("first_name", user.getFirstName());
+        }
+        if (user.getLastName() != null) {
+            params.put("last_name", user.getLastName());
+        }
+
+
         return new MapSqlParameterSource(params);
     }
     class UserRowMapper implements RowMapper<User> {
@@ -47,6 +55,9 @@ public interface UserDAO extends Dao<User, Long> {
             user.setId(rs.getLong("id"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+
 
             user.setEmail(rs.getString("email"));
             var birthDate = rs.getDate("birth_date");
