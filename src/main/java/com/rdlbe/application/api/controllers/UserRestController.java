@@ -1,6 +1,8 @@
 package com.rdlbe.application.api.controllers;
 
+import com.rdlbe.application.business.publishing.ClassroomService;
 import com.rdlbe.application.business.publishing.UserService;
+import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.LoginRequest;
 import com.rdlbe.application.views.UserItem;
 import com.rdlbe.application.views.UserRequest;
@@ -21,9 +23,11 @@ public class UserRestController {
 
 
         private final UserService userService;
+        private final ClassroomService classroomService;
 
-        public UserRestController(UserService userService) {
+        public UserRestController(UserService userService, ClassroomService classroomService) {
             this.userService = userService;
+            this.classroomService = classroomService;
         }
 
         // --- GET: tutti gli utenti ---
@@ -56,6 +60,13 @@ public class UserRestController {
         public void deleteUser(@PathVariable("id") Long id) {
             userService.deleteUser(id);
         }
+
+
+
+    @GetMapping("/{userId}/classrooms")
+    public List<ClassroomItem> getClassroomsByUser(@PathVariable Long userId) {
+        return classroomService.getClassroomsByUser(userId);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<UserItem> login(@RequestBody LoginRequest request) {
