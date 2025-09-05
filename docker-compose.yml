@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Definizione dei servizi (container)
 services:
   # Servizio per il database PostgreSQL
@@ -15,11 +13,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - spring-net
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/init.sql
+#    networks:
+#      - spring-net
 
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: rdlbe
     restart: on-failure
     depends_on:
@@ -31,8 +32,8 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-    networks:
-      - spring-net
+#    networks:
+#      - spring-net
 
 # Definizione dei volumi
 volumes:

@@ -27,6 +27,7 @@ public class Inscription {
     private Classroom classroom;
 
     // Usato boolean primitivo per evitare valori null
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean registration = false;
 }
 

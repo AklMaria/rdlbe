@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -50,6 +51,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private Set<Inscription> inscriptions;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Document> documents;
 
     public enum Role {
         ADMIN,
