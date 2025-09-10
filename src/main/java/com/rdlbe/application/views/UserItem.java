@@ -23,6 +23,7 @@ public class UserItem {
     private String email;
     private LocalDate birthDate;  // Cambiato da LocalDateTime a LocalDate
     private User.Role role;
+    private User.UserLevel userLevel;
     private Boolean state;
     private Integer credits;
     // private Set<Inscription> inscriptions;

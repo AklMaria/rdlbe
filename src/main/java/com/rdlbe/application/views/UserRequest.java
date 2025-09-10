@@ -16,6 +16,7 @@ public class UserRequest {
     private String email;
     private LocalDate birthDate;
     private User.Role role;  // Deve essere "USER" o "ADMIN"
+    private User.UserLevel userLevel;
     private Boolean state;
     private Integer credits;
 }

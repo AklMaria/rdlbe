@@ -42,6 +42,11 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_level", nullable = false)
+    private UserLevel userLevel = UserLevel.BEGINNER; // valore di default
+
     @Column(nullable = false)
     private Boolean state = false;  // default true
 
@@ -58,5 +63,11 @@ public class User {
     public enum Role {
         ADMIN,
         USER
+    }
+
+    public enum UserLevel {
+        BEGINNER,
+        INTERMEDIATE,
+        ADVANCED
     }
 }

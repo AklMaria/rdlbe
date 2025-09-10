@@ -72,6 +72,13 @@ public interface UserDAO extends Dao<User, Long> {
             user.setState(rs.getBoolean("state"));
             int credits = rs.getInt("credits");
             user.setCredits(rs.wasNull() ? 0 : credits);
+
+            //Livello user
+            String levelStr = rs.getString("user_level");
+            if (levelStr != null) {
+                user.setUserLevel(User.UserLevel.valueOf(levelStr));
+            }
+
             return user;
         }
 

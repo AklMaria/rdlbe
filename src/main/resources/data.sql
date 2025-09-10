@@ -103,3 +103,6 @@ INSERT INTO documents (user_id, content) VALUES
 
 -- Esempio di INSERT che fallirebbe a causa del CHECK constraint (non puoi eseguirlo)
 -- INSERT INTO documents (user_id, content) VALUES (1, 'Questa non è una stringa base64!');
+
+ALTER TABLE users
+    ADD COLUMN user_level VARCHAR(20) NOT NULL DEFAULT 'BEGINNER';

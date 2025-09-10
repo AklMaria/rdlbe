@@ -20,8 +20,8 @@ public class UserDAOImpl implements UserDAO {
     private final static String SELECT_USERS = "SELECT u.* FROM users u";
     private final static String FIND_BY_ID = "SELECT u.* FROM users u WHERE u.id = :id";
     private final static String INSERT_USER = """
-    INSERT INTO users (username,first_name, last_name, email, birth_date, role, state, credits)
-    VALUES (:username,:first_name, :last_name, :email, :birth_date, :role, :state, :credits)
+    INSERT INTO users (username,first_name, last_name, email, birth_date, role, state, credits,user_level)
+    VALUES (:username,:first_name, :last_name, :email, :birth_date, :role, :state, :credits, :user_level)
     RETURNING id
 """;
 
@@ -35,7 +35,8 @@ public class UserDAOImpl implements UserDAO {
         state = :state,
         credits = :credits,
         first_name = :first_name,
-        last_name = :last_name
+        last_name = :last_name,
+        user_level = :user_level
     WHERE id = :id
 """;
     private final static String DELETE_USER = "DELETE FROM users WHERE id = :id";
@@ -58,7 +59,9 @@ public class UserDAOImpl implements UserDAO {
                 .addValue("birth_date", entity.getBirthDate())
                 .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())
                 .addValue("state", entity.getState())
-                .addValue("credits", entity.getCredits());
+                .addValue("credits", entity.getCredits())
+                .addValue("user_level", entity.getUserLevel() != null ? entity.getUserLevel().name() : User.UserLevel.BEGINNER.name());
+
 
         return jdbcTemplate.queryForObject(INSERT_USER, params, Long.class);
     }
@@ -74,7 +77,9 @@ public class UserDAOImpl implements UserDAO {
                 .addValue("birth_date", entity.getBirthDate())
                 .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())
                 .addValue("state", entity.getState())
-                .addValue("credits", entity.getCredits());
+                .addValue("credits", entity.getCredits())
+                .addValue("user_level", entity.getUserLevel().name());
+
 
         jdbcTemplate.update(UPDATE_USER, params);
     }
