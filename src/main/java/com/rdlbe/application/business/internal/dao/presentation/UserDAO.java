@@ -86,4 +86,5 @@ public interface UserDAO extends Dao<User, Long> {
 
     }
     Optional<User> findByUsername(String username);
+    Optional<User> findByMail(String mail);
 }

@@ -26,6 +26,7 @@ public class UserDAOImpl implements UserDAO {
 """;
 
     private static final String FIND_BY_USERNAME = "SELECT * FROM users WHERE username = :username";
+    private static final String FIND_BY_EMAIL = "SELECT * FROM users WHERE email = :email";
     private final static String UPDATE_USER = """
     UPDATE users
     SET username = :username,
@@ -118,4 +119,11 @@ public class UserDAOImpl implements UserDAO {
         return results.stream().findFirst();
     }
 
+
+    @Override
+    public Optional<User> findByMail(String email) {
+        var params = new MapSqlParameterSource().addValue("email", email);
+        var results = jdbcTemplate.query(FIND_BY_EMAIL, params, new UserRowMapper(objectMapper));
+        return results.stream().findFirst();
+    }
 }

@@ -80,8 +80,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserItem> login(String username, String rawPassword) {
-        Optional<User> userOpt = userDAO.findByUsername(username);
+    public Optional<UserItem> login(String mail, String rawPassword) {
+        Optional<User> userOpt = userDAO.findByMail(mail);
         return Optional.of(modelMapper.map(userOpt, UserItem.class));
 //        if (userOpt.isPresent()) {
 //            User user = userOpt.get();
