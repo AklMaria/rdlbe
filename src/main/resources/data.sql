@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Pulisce l'ambiente in caso di riesecuzione dello script
 DROP TABLE IF EXISTS documents;
 DROP TABLE IF EXISTS inscriptions;
@@ -18,7 +20,7 @@ CREATE TABLE users (
     username VARCHAR(255) UNIQUE,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
-    password VARCHAR(255) NOT NULL,
+    password BYTEA NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     birth_date DATE,
     role ruolo_enum NOT NULL,
@@ -70,9 +72,11 @@ CREATE TABLE documents (
 -- Inserimento utenti
 -- Nota: le password dovrebbero essere hashate
 INSERT INTO users (username, first_name, last_name, password, email, birth_date, role, credits) VALUES
-('mariorossi', 'Mario', 'Rossi', 'password123', 'mario.rossi@email.com', '1990-05-15', 'ADMIN', 100),
-('lucabianchi', 'Luca', 'Bianchi', 'password456', 'luca.bianchi@email.com', '1995-11-20', 'USER', 50),
-('annagreen', 'Anna', 'Verdi', 'password789', 'anna.verdi@email.com', '1998-02-10', 'USER', 75);
+('mariorossi', 'Mario', 'Rossi', PGP_SYM_ENCRYPT('$2a$10$/U/UKctGlrRKrPQMnhuOtuoavO87Aa3sZlSHOw5z2UZOtaGitKfDO', 'YourSuperSecretKeyGoesHere'), 'mario.rossi@email.com', '1990-05-15', 'ADMIN', 100), --- password: password123
+('lucabianchi', 'Luca', 'Bianchi', PGP_SYM_ENCRYPT('$2a$10$8rMNrpr79zDndb54/aRF4.ZHz0yL4d8qX9BPnRyijavZfTpmLU3Ju', 'YourSuperSecretKeyGoesHere'), 'luca.bianchi@email.com', '1995-11-20', 'USER', 50), --- password: password456
+('annagreen', 'Anna', 'Verdi', PGP_SYM_ENCRYPT('$2a$10$ODhPyS6.PKwjvLL3wkACBuJzBOm936MC58mYjuuhwc8qu12bv57VK', 'YourSuperSecretKeyGoesHere'), 'anna.verdi@email.com', '1998-02-10', 'USER', 75), --- password: password789
+('diocane', 'Domenico', 'Muscillo', PGP_SYM_ENCRYPT('$2a$10$ODhPyS6.PKwjvLL3wkACBuJzBOm936MC58mYjuuhwc8qu12bv57VK', 'YourSuperSecretKeyGoesHere'), 'domenicomuscillo13@gmail.com', '2000-06-01', 'ADMIN', 1000000), --- password: password789
+('peugeot208', 'Maria', 'Akl', PGP_SYM_ENCRYPT('$2a$10$ODhPyS6.PKwjvLL3wkACBuJzBOm936MC58mYjuuhwc8qu12bv57VK', 'YourSuperSecretKeyGoesHere'), 'maria2000akl@gmail.com', '2000-01-01', 'ADMIN', 1000000); --- password: password789
 
 -- Inserimento aule
 INSERT INTO classrooms (name, description, link, max_seats, date, time, duration) VALUES

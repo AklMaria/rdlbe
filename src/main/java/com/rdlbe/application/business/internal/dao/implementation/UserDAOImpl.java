@@ -5,10 +5,12 @@ import com.rdlbe.application.business.internal.dao.presentation.UserDAO;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.foundations.utils.DBUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +21,7 @@ public class UserDAOImpl implements UserDAO {
 
     private final static String SELECT_USERS = "SELECT u.* FROM users u";
     private final static String FIND_BY_ID = "SELECT u.* FROM users u WHERE u.id = :id";
+    private final static String FIND_BY_EMAIL = "SELECT u.* FROM users u WHERE u.email = :email";
     private final static String INSERT_USER = """
     INSERT INTO users (username,first_name, last_name, email, birth_date, role, state, credits,user_level)
     VALUES (:username,:first_name, :last_name, :email, :birth_date, :role, :state, :credits, :user_level)
@@ -26,7 +29,6 @@ public class UserDAOImpl implements UserDAO {
 """;
 
     private static final String FIND_BY_USERNAME = "SELECT * FROM users WHERE username = :username";
-    private static final String FIND_BY_EMAIL = "SELECT * FROM users WHERE email = :email";
     private final static String UPDATE_USER = """
     UPDATE users
     SET username = :username,
@@ -41,14 +43,17 @@ public class UserDAOImpl implements UserDAO {
     WHERE id = :id
 """;
     private final static String DELETE_USER = "DELETE FROM users WHERE id = :id";
+    private final static String DECRYPT_BY_ID = "SELECT PGP_SYM_DECRYPT(password, '%s') FROM users WHERE id = :userId";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final String encryptionKey;
 
-    public UserDAOImpl(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    public UserDAOImpl(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper, @Value("${app.security.encryption-key}") String encryptionKey) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
-    }
+		this.encryptionKey = encryptionKey;
+	}
 
     @Override
     public Long create(User entity) {
@@ -111,6 +116,18 @@ public class UserDAOImpl implements UserDAO {
     }
 
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        var params = new MapSqlParameterSource().addValue("email", email);
+        return jdbcTemplate.query(FIND_BY_EMAIL, params, new UserRowMapper(objectMapper)).stream().findFirst();
+    }
+
+    @Override
+    public String decryptPwd(Long id) {
+        var params = new MapSqlParameterSource().addValue("userId", id);
+        byte[] hash = jdbcTemplate.queryForObject(String.format(DECRYPT_BY_ID, encryptionKey), params, byte[].class);
+        return new String(hash, StandardCharsets.UTF_8);
+    }
 
     @Override
     public Optional<User> findByUsername(String username) {

@@ -9,6 +9,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: rdldb
+      PG_CRYPTO_KEY: "YourSuperSecretKeyGoesHere"
     ports:
       - "5432:5432"
     volumes:
@@ -32,6 +33,7 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      PG_CRYPTO_KEY: "YourSuperSecretKeyGoesHere"
 #    networks:
 #      - spring-net
 

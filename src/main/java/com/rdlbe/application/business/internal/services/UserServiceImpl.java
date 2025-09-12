@@ -1,18 +1,14 @@
 package com.rdlbe.application.business.internal.services;
 
 import com.rdlbe.application.business.internal.dao.presentation.UserDAO;
-import com.rdlbe.application.business.internal.domains.Classroom;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.publishing.UserService;
-import com.rdlbe.application.views.ClassroomItem;
-import com.rdlbe.application.views.ClassroomRequest;
 import com.rdlbe.application.views.UserItem;
 import com.rdlbe.application.views.UserRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 
@@ -25,11 +21,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserDAO userDAO;
     private final ModelMapper modelMapper;
+    private final AuthService authService;
 
-    public UserServiceImpl(UserDAO userDAO, ModelMapper modelMapper) {
+    public UserServiceImpl(UserDAO userDAO, ModelMapper modelMapper, AuthService authService) {
         this.userDAO = userDAO;
         this.modelMapper = modelMapper;
-    }
+		this.authService = authService;
+	}
 
     @PostConstruct
     private void init() {
@@ -81,15 +79,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserItem> login(String mail, String rawPassword) {
-        Optional<User> userOpt = userDAO.findByMail(mail);
-        return Optional.of(modelMapper.map(userOpt, UserItem.class));
-//        if (userOpt.isPresent()) {
-//            User user = userOpt.get();
-//            if (BCrypt.checkpw(rawPassword, user.getPassword())) {
-//
-//            }
-//        }
-
-       // return Optional.empty(); // login fallito
+        return authService.checkCredentials(mail, rawPassword);
     }
+
+    @Override
+    public Optional<UserItem> getUserByEmail(String email) {
+        Optional<User> userOpt = userDAO.findByEmail(email);
+		return userOpt.map(user -> modelMapper.map(user, UserItem.class));
+	}
 }

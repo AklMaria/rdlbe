@@ -42,6 +42,11 @@ public class UserRestController {
             return userService.getUserById(id);
         }
 
+        @GetMapping(value = "/exist")
+        public Boolean userExist(@RequestParam("email") String email) {
+            return userService.getUserByEmail(email).isPresent();
+        }
+
         // --- POST: crea utente ---
         @PostMapping
         public UserItem createUser(@RequestBody UserRequest user) {

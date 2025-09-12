@@ -1,7 +1,7 @@
 # Fase 1: Build dell'applicazione con Maven
 # Usiamo un'immagine con JDK e Maven per compilare il progetto.
 # 'eclipse-temurin' è un'ottima scelta multi-architettura.
-FROM eclipse-temurin:17-jdk-jammy as builder
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
 # Imposta la directory di lavoro
 WORKDIR /app

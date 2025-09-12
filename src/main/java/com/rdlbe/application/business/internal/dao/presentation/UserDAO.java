@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserDAO extends Dao<User, Long> {
-
     // Campi usati per i filtri dinamici (se servono)
     final Map<String, String> fieldMap = Map.of(
             "username", "username",
@@ -42,6 +41,11 @@ public interface UserDAO extends Dao<User, Long> {
 
         return new MapSqlParameterSource(params);
     }
+
+	Optional<User> findByEmail(String email);
+
+    String decryptPwd(Long id);
+
     class UserRowMapper implements RowMapper<User> {
         final ObjectMapper objectMapper;
 
@@ -54,7 +58,6 @@ public interface UserDAO extends Dao<User, Long> {
             var user = new User();
             user.setId(rs.getLong("id"));
             user.setUsername(rs.getString("username"));
-            user.setPassword(rs.getString("password"));
             user.setFirstName(rs.getString("first_name"));
             user.setLastName(rs.getString("last_name"));
 
@@ -81,8 +84,6 @@ public interface UserDAO extends Dao<User, Long> {
 
             return user;
         }
-
-
 
     }
     Optional<User> findByUsername(String username);

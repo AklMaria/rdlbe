@@ -14,4 +14,5 @@ public interface UserService {
     void deleteUser(Long id);
     Optional<UserItem> login(String mail, String rawPassword);
 
+	Optional<UserItem> getUserByEmail(String email);
 }
