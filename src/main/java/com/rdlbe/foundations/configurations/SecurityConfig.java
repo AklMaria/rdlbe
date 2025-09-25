@@ -10,9 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
-
 
 @Configuration
 public class SecurityConfig {
@@ -22,31 +22,35 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // Bean CORS separato
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://frontend-426407479258.europe-west9.run.app/",
+                "https://redditodiliberta.it"
+        ));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> {
-                CorsConfigurationSource source = request -> {
-                    CorsConfiguration config = new CorsConfiguration();
-
-                    config.setAllowedOrigins(List.of("http://localhost:4200", "https://frontend-426407479258.europe-west9.run.app", "https://redditodiliberta.it"));
-
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    config.setAllowedHeaders(List.of("*"));
-                    config.setAllowCredentials(true);
-                    return config;
-                };
-                cors.configurationSource(source);
-            })
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-//                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                .requestMatchers("/users/login").permitAll()
-//                .requestMatchers(HttpMethod.GET, "/users/exist").permitAll()
-//                .anyRequest().authenticated()
-                    // TODO: Bloccare le rotte
-                            .anyRequest().permitAll()
-            );
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // usa il bean CORS
+                .csrf(AbstractHttpConfigurer::disable) // disabilita CSRF per REST API
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // permette tutte le preflight
+                        .requestMatchers("/users/login").permitAll()            // login senza autenticazione
+                        .requestMatchers(HttpMethod.GET, "/users/exist").permitAll() // esempio endpoint pubblico
+                        .anyRequest().authenticated() // tutto il resto richiede autenticazione
+                );
 
         return http.build();
     }
