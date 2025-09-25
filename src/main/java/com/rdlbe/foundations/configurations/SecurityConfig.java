@@ -22,13 +22,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Bean CORS separato
+    // ✅ Configurazione CORS aggiornata
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
+        // Usa il dominio reale del frontend su Cloud Run
         configuration.setAllowedOrigins(List.of(
-            "*"
+                "https://frontend-426407479258.europe-west9.run.app"
         ));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -44,7 +47,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // usa il bean CORS
                 .csrf(AbstractHttpConfigurer::disable) // disabilita CSRF per REST API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // permette tutte le preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // permette le preflight
                         .requestMatchers("/users/login").permitAll()            // login senza autenticazione
                         .requestMatchers(HttpMethod.GET, "/users/exist").permitAll() // esempio endpoint pubblico
                         .anyRequest().authenticated() // tutto il resto richiede autenticazione
