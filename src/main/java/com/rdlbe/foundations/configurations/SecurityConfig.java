@@ -50,7 +50,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // permette le preflight
                         .requestMatchers("/users/login").permitAll()            // login senza autenticazione
                         .requestMatchers(HttpMethod.GET, "/users/exist").permitAll() // esempio endpoint pubblico
-                        .anyRequest().authenticated() // tutto il resto richiede autenticazione
+                        .anyRequest().permitAll()
+
                 );
 
         return http.build();
