@@ -29,7 +29,7 @@ public class SecurityConfig {
                 CorsConfigurationSource source = request -> {
                     CorsConfiguration config = new CorsConfiguration();
 
-                    config.setAllowedOrigins(List.of("http://localhost:4200"));
+                    config.setAllowedOrigins(List.of("http://localhost:4200", "https://frontend-426407479258.europe-west9.run.app", "https://redditodiliberta.it"));
 
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
