@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +44,12 @@ public class UserRestController {
         }
 
         @GetMapping(value = "/exist")
-        public Boolean userExist(@RequestParam("email") String email) {
-            return userService.getUserByEmail(email).isPresent();
+        public Long userExist(@RequestParam("email") String email) {
+            Optional<UserItem> user = userService.getUserByEmail(email);
+            if (user.isPresent()) {
+                return user.get().getId();
+            }
+            return 0L;
         }
 
         // --- POST: crea utente ---
