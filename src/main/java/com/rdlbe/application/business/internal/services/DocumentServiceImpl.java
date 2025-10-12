@@ -17,7 +17,7 @@ public class DocumentServiceImpl implements DocumentService {
 		this.dao = dao;
 	}
 	@Override
-	public List<Document> getDocsByUserId(Long userId) {
+	public List<DocumentItem> getDocsByUserId(Long userId) {
 		return dao.findByUserId(userId);
 	}
 

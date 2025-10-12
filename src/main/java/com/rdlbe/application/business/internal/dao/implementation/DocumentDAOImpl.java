@@ -3,6 +3,7 @@ package com.rdlbe.application.business.internal.dao.implementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rdlbe.application.business.internal.dao.presentation.DocumentDAO;
 import com.rdlbe.application.business.internal.domains.Document;
+import com.rdlbe.application.views.DocumentItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,7 +18,7 @@ public class DocumentDAOImpl implements DocumentDAO {
 	private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
-	private static final String FIND_BY_USER_ID = "SELECT id, user_id, content FROM documents WHERE user_id = :userId";
+	private static final String FIND_BY_USER_ID = "SELECT  content FROM documents WHERE user_id = :userId";
 
     private static final String SAVE_DOCUMENT = "INSERT INTO documents (user_id, content) VALUES (:userId, :content)";
 

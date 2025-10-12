@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS classrooms;
 DROP TYPE IF EXISTS ruolo_enum;
 
+
 -- =================================================================
 -- 1. Tipi ENUM e Creazione Tabelle
 -- =================================================================
@@ -34,6 +35,7 @@ CREATE TABLE classrooms (
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255),
     link VARCHAR(255),
+
     max_seats INTEGER DEFAULT 10,
     is_active BOOLEAN DEFAULT true,
     date DATE,

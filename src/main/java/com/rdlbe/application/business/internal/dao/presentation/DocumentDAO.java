@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface DocumentDAO {
-	List<Document> findByUserId(Long userId);
+	List<DocumentItem> findByUserId(Long userId);
 	void saveDoc(Long userId, String content);
 	boolean deleteDoc(Long id);
 

@@ -19,7 +19,7 @@ public class DocumentRestController {
 	}
 
 	@GetMapping("/{userId}")
-	public List<Document> getDocsByUserId(@PathVariable("userId") Long userId) {
+	public List<DocumentItem> getDocsByUserId(@PathVariable("userId") Long userId) {
 		return documentService.getDocsByUserId(userId);
 	}
 
