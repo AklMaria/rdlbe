@@ -1,11 +1,12 @@
 package com.rdlbe.application.business.publishing;
 
-import com.rdlbe.application.business.internal.domains.Document;
+import com.rdlbe.application.views.DocumentItem;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface DocumentService {
-	List<DocumentItem> getDocsByUserId(Long userId);
-	void saveDoc(Long userId, String doc);
-	boolean deleteDoc(Long id);
+    List<DocumentItem> getDocsByUserId(Long userId);
+    void saveDoc(Long userId, MultipartFile file);
+    boolean deleteDoc(Long id);
 }

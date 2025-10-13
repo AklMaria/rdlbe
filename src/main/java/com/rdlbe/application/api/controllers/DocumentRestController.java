@@ -1,10 +1,11 @@
 package com.rdlbe.application.api.controllers;
 
-import com.rdlbe.application.business.internal.domains.Document;
 import com.rdlbe.application.business.publishing.DocumentService;
-import com.rdlbe.application.views.DocumentRequest;
+import com.rdlbe.application.views.DocumentItem;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,24 +13,29 @@ import java.util.List;
 @RequestMapping("/docs")
 @Slf4j
 public class DocumentRestController {
-	private final DocumentService documentService;
 
-	public DocumentRestController(DocumentService documentService) {
-		this.documentService = documentService;
-	}
+    private final DocumentService documentService;
 
-	@GetMapping("/{userId}")
-	public List<DocumentItem> getDocsByUserId(@PathVariable("userId") Long userId) {
-		return documentService.getDocsByUserId(userId);
-	}
+    public DocumentRestController(DocumentService documentService) {
+        this.documentService = documentService;
+    }
 
-	@DeleteMapping("/{userId}")
-	public boolean deleteDocByUserId(@PathVariable("userId") Long userId) {
-		return documentService.deleteDoc(userId);
-	}
+    @GetMapping("/{userId}")
+    public List<DocumentItem> getDocsByUserId(@PathVariable("userId") Long userId) {
+        return documentService.getDocsByUserId(userId);
+    }
 
-	@PostMapping
-	public void createDoc(@RequestBody DocumentRequest documentRequest) {
-		documentService.saveDoc(documentRequest.getUserId(), documentRequest.getContent());
-	}
+    @DeleteMapping("/{id}")
+    public boolean deleteDocById(@PathVariable("id") Long id) {
+        return documentService.deleteDoc(id);
+    }
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadDoc(
+            @RequestParam("userId") Long userId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        log.info("Ricevuto upload '{}' per user {}", file.getOriginalFilename(), userId);
+        documentService.saveDoc(userId, file);
+    }
 }
