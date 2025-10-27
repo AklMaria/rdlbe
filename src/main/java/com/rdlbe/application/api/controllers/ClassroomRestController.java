@@ -4,8 +4,11 @@ import com.rdlbe.application.business.publishing.ClassroomService;
 import com.rdlbe.application.views.ClassroomItem;
 import com.rdlbe.application.views.ClassroomRequest;
 import com.rdlbe.application.views.ClassroomUsersDetailsItem;
+import com.rdlbe.application.views.DocumentItem;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +30,12 @@ public class ClassroomRestController {
     public List<ClassroomItem> getAllClassrooms() {
         log.debug("Getting all classrooms");
         return classroomService.getAllClassrooms();
+    }
+
+    @GetMapping("/completed")
+    public List<ClassroomItem> getCompletedClassrooms(@RequestParam("userId") Long userId) {
+        log.debug("Getting completed classrooms");
+        return classroomService.getCompletedClassrooms(userId);
     }
 
     // --- GET: classroom by ID ---
@@ -55,38 +64,28 @@ public class ClassroomRestController {
         classroomService.deleteClassroom(id);
     }
 
-
-
-    // --- Query personalizzate ---
-
-    // 1. Aule di un utente in una data
-//    @GetMapping("/by-user-date")
-//    public List<ClassroomItem> getClassroomsByUserAndDate(@RequestParam("userId") Long userId,
-//                                                          @RequestParam("date") String date) {
-//        LocalDateTime parsedDate = LocalDateTime.parse(date);
-//        return classroomService.getClassroomsByUserAndDate(userId, parsedDate);
-//    }
-
-    // 2. Aule disponibili in una data
-//    @GetMapping("/available")
-//    public List<ClassroomItem> getAvailableClassroomsByDate(@RequestParam("date") String date) {
-//        LocalDateTime parsedDate = LocalDateTime.parse(date);
-//        return classroomService.getAvailableClassroomsByDate(parsedDate);
-//    }
-
-    // 3. Aule di un utente in un intervallo di date
-//    @GetMapping("/by-user-daterange")
-//    public List<ClassroomItem> getClassroomsByUserInDateRange(@RequestParam("userId") Long userId,
-//                                                              @RequestParam("startDate") String startDate,
-//                                                              @RequestParam("endDate") String endDate) {
-//        LocalDateTime start = LocalDateTime.parse(startDate);
-//        LocalDateTime end = LocalDateTime.parse(endDate);
-//        return classroomService.getClassroomsByUserInDateRange(userId, start, end);
-//    }
-
     @GetMapping("/{id}/users")
     public ClassroomUsersDetailsItem getClassroomUsers(@PathVariable("id") Long id) {
         return classroomService.getClassroomUsersById(id);
+    }
+
+    @GetMapping("/{id}/docs")
+    public List<DocumentItem> getClassroomDocs(@PathVariable("id") Long id, @RequestParam("userId") Long userId) {
+        return classroomService.getClassroomDocs(id);
+    }
+
+    @PostMapping(path="/{id}/doc", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadDoc(
+            @PathVariable("id") Long id,
+            @RequestParam("file") MultipartFile file
+    ) {
+        log.info("Ricevuto upload '{}' per classroom id {}", file.getOriginalFilename(), id);
+        classroomService.uploadDoc(id, file);
+    }
+
+    @DeleteMapping("/{id}/docs/{docId}")
+    public void deleteDoc(@PathVariable("id") Long id, @PathVariable("docId") Long docId) {
+        classroomService.deleteDoc(id, docId);
     }
 
 }

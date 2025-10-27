@@ -5,15 +5,13 @@ import com.rdlbe.application.business.internal.dao.presentation.InscriptionDAO;
 import com.rdlbe.application.business.internal.domains.Classroom;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.publishing.ClassroomService;
-import com.rdlbe.application.views.ClassroomItem;
-import com.rdlbe.application.views.ClassroomRequest;
-import com.rdlbe.application.views.ClassroomUsersDetailsItem;
-import com.rdlbe.application.views.UserSummary;
+import com.rdlbe.application.views.*;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,6 +54,21 @@ public class ClassroomServiceImpl implements ClassroomService {
                 })
                 .toList();
     }
+
+    @Override
+    public List<ClassroomItem> getCompletedClassrooms(Long userId) {
+        return classroomDAO.findCompletedClassrooms(userId)
+                .stream()
+                .map(classroom -> {
+                    ClassroomItem dto = modelMapper.map(classroom, ClassroomItem.class);
+                    int enrolled = inscriptionDAO.countByClassroom(classroom.getId());
+                    int max = Optional.ofNullable(classroom.getMaxSeats()).orElse(0);
+                    dto.setAvailableSeats(Math.max(0, max - enrolled)); // protezione contro valori negativi
+                    return dto;
+                })
+                .toList();
+    }
+
     @Override
     public Optional<ClassroomItem> getClassroomById(Long id) {
         return classroomDAO.findById(id)
@@ -156,5 +169,22 @@ public class ClassroomServiceImpl implements ClassroomService {
         return dto;
     }
 
+    @Override
+    public List<DocumentItem> getClassroomDocs(Long classroomId) {
+        return classroomDAO.findClassroomsDocs(classroomId)
+                .stream()
+                .map(doc -> modelMapper.map(doc, DocumentItem.class))
+                .toList();
+    }
+
+    @Override
+    public void uploadDoc(Long classroomId, MultipartFile file) {
+        classroomDAO.uploadDoc(classroomId, file);
+    }
+
+    @Override
+    public void deleteDoc(Long classroomId, Long docId) {
+        classroomDAO.deleteDoc(classroomId, docId);
+    }
 
 }

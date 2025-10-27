@@ -18,7 +18,6 @@ public interface DocumentDAO {
 
     boolean deleteDoc(Long id);
 
-    // ✅ Mapper per convertire i risultati SQL in Document
     class DocumentRowMapper implements RowMapper<Document> {
         final ObjectMapper objectMapper;
 

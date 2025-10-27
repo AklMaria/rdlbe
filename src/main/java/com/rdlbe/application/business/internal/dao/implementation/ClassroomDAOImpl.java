@@ -2,14 +2,19 @@ package com.rdlbe.application.business.internal.dao.implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rdlbe.application.business.internal.dao.presentation.ClassroomDAO;
+import com.rdlbe.application.business.internal.dao.presentation.DocumentDAO;
 import com.rdlbe.application.business.internal.domains.Classroom;
+import com.rdlbe.application.business.internal.domains.Document;
+import com.rdlbe.application.views.DocumentItem;
 import com.rdlbe.foundations.utils.DBUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +69,34 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     FROM classrooms c
     JOIN inscriptions i ON c.id = i.classroom_id
     WHERE i.user_id = :userId
+""";
+
+    private static final String SELECT_CLASSROOMS_DOCS = """
+    SELECT cd.*
+    FROM classroom_documents cd
+    -- JOIN inscriptions i ON c.id = i.classroom_id
+    -- JOIN classrooms c ON c.id = cd.classroom_id
+    -- WHERE i.user_id = :userId
+    WHERE cd.classroom_id = :classroomId
+""";
+
+    private static final String SELECT_COMPLETED_CLASSROOMS = """
+    SELECT c.*
+    FROM classrooms c
+    JOIN inscriptions i ON c.id = i.classroom_id
+    JOIN classroom_documents d ON c.id = d.classroom_id
+    WHERE i.user_id = :userId
+""";
+
+    private static final String UPLOAD_DOC = """
+    INSERT INTO classroom_documents (classroom_id, file_name, content_type, content, created_at)
+    VALUES (:classroomId, :fileName, :contentType, :content, :createdAt)
+""";
+
+    private static final String DELETE_DOC = """
+    DELETE FROM classroom_documents
+    -- WHERE classroom_id = :classroomId
+    WHERE id = :docId
 """;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -159,18 +192,41 @@ public class ClassroomDAOImpl implements ClassroomDAO {
         return jdbcTemplate.query(CLASSROOMS_BY_USER_IN_DATE_RANGE, params, new ClassroomRowMapper(objectMapper));
     }
 
-
-
-
     @Override
     public List<Classroom> findClassroomsByUser(Long userId) {
         var params = new MapSqlParameterSource().addValue("userId", userId);
         return jdbcTemplate.query(SELECT_CLASSROOMS_BY_USER, params, new ClassroomDAO.ClassroomRowMapper(objectMapper));
     }
 
+    @Override
+    public List<Classroom> findCompletedClassrooms(Long userId) {
+        var params = new MapSqlParameterSource().addValue("userId", userId);
+        return jdbcTemplate.query(SELECT_COMPLETED_CLASSROOMS, params, new ClassroomDAO.ClassroomRowMapper(objectMapper));
+    }
 
+    @Override
+    public List<Document> findClassroomsDocs(Long classroomId) {
+        var params = new MapSqlParameterSource().addValue("classroomId", classroomId);
+        return jdbcTemplate.query(SELECT_CLASSROOMS_DOCS, params, new DocumentDAO.DocumentRowMapper(objectMapper));
+    }
 
+    @Override
+    public void uploadDoc(Long classroomId, MultipartFile file) {
+        var params = new MapSqlParameterSource()
+                .addValue("classroomId", classroomId)
+                .addValue("fileName", file.getName())
+                .addValue("contentType", file.getContentType())
+                .addValue("content", file)
+                .addValue("createdAt", LocalDateTime.now());
+        jdbcTemplate.update(UPLOAD_DOC, params);
+    }
 
-
+    @Override
+    public void deleteDoc(Long classroomId, Long docId) {
+        var params = new MapSqlParameterSource()
+                .addValue("classroomId", classroomId)
+                .addValue("docId", docId);
+        jdbcTemplate.update(DELETE_DOC, params);
+    }
 
 }

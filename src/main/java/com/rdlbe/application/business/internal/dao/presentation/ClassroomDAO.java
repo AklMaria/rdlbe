@@ -2,11 +2,14 @@ package com.rdlbe.application.business.internal.dao.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rdlbe.application.business.internal.domains.Classroom;
+import com.rdlbe.application.business.internal.domains.Document;
+import com.rdlbe.application.views.DocumentItem;
 import com.rdlbe.foundations.core.Dao;
 import jakarta.annotation.Nonnull;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -68,6 +71,9 @@ public interface ClassroomDAO extends Dao<Classroom,Long> {
     List<Classroom> findAvailableByDate(LocalDateTime date);
     List<Classroom> findByUserInDateRange(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
-
+    List<Classroom> findCompletedClassrooms(Long userId);
+    List<Document> findClassroomsDocs(Long userId);
+    void uploadDoc(Long classroomId, MultipartFile file);
+    void deleteDoc(Long classroomId, Long docId);
 }
 
