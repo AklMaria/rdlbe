@@ -4,10 +4,14 @@ import com.rdlbe.application.business.internal.dao.presentation.AffiliationDAO;
 import com.rdlbe.application.business.internal.domains.Affiliation;
 import com.rdlbe.application.business.publishing.AffiliationService;
 import com.rdlbe.application.views.AffiliationItem;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@Slf4j
 public class AffiliationServiceImpl implements AffiliationService {
 
     private final AffiliationDAO affiliationDAO;
