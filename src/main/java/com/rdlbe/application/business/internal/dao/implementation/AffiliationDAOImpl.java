@@ -4,13 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rdlbe.application.business.internal.dao.presentation.AffiliationDAO;
 import com.rdlbe.application.business.internal.domains.Affiliation;
 import com.rdlbe.foundations.utils.DBUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Repository
+@Slf4j
 public class AffiliationDAOImpl implements AffiliationDAO {
 
     private final static String SELECT_AFFILIATIONS = "SELECT a.* FROM affiliations a";
