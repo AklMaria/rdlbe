@@ -28,4 +28,5 @@ public class ClassroomItem {
    // private LocalDateTime dateEndTime;
     private LocalTime time;
     private Integer duration;
+    private boolean completed;
 }

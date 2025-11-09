@@ -21,11 +21,11 @@ public class ClassroomRequest {
     private Optional<String> name;
     private Optional<String> description;
     private Optional<String> link;
-
     private Optional<Integer> maxSeats;
     private Optional<Boolean> isActive;
     private Optional<LocalDate> date;
     private Optional<LocalTime> time;
     private Optional<Integer> duration;
+    private Optional<Boolean> completed;
   //  private Optional<LocalDateTime> dateEndTime;
 }

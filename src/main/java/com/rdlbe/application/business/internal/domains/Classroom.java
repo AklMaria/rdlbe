@@ -26,6 +26,7 @@ public class Classroom {
     private String description;
     private Integer maxSeats;
     private Boolean isActive;
+    private Boolean completed;
 
     @Column(name = "link")
     private String link;

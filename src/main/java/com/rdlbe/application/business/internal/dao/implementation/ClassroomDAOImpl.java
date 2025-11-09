@@ -26,8 +26,8 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 
     private final static String SELECT_CLASSROOMS = "SELECT c.* FROM classrooms c";
     private final static String INSERT_CLASSROOM = """
-        INSERT INTO classrooms (name, description, link,max_seats, is_active, date, time,duration)
-        VALUES (:name, :description, :link, :maxSeats, :isActive, :date, :time, :duration)
+        INSERT INTO classrooms (name, description, link,max_seats, is_active, date, time,duration, completed)
+        VALUES (:name, :description, :link, :maxSeats, :isActive, :date, :time, :duration, :completed)
         RETURNING id
     """;
     private final static String UPDATE_CLASSROOM = """
@@ -39,7 +39,8 @@ public class ClassroomDAOImpl implements ClassroomDAO {
             is_active = :isActive,
             date = :date,
             time = :time,
-            duration = :duration
+            duration = :duration,
+            completed = :completed
         WHERE id = :id
     """;
     private final static String DELETE_CLASSROOM = "DELETE FROM classrooms WHERE id = :id";
@@ -85,7 +86,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     FROM classrooms c
     JOIN inscriptions i ON c.id = i.classroom_id
     JOIN classroom_documents d ON c.id = d.classroom_id
-    WHERE i.user_id = :userId
+    WHERE i.user_id = :userId AND c.completed = true
 """;
 
     private static final String UPLOAD_DOC = """
@@ -117,6 +118,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("isActive", entity.getIsActive())
                 .addValue("date", entity.getDate())
                 .addValue("time", entity.getTime())
+                .addValue("completed", entity.getCompleted())
                 .addValue("duration", entity.getDuration());
                // .addValue("dateEndTime", entity.getDateEndTime());
 
@@ -134,6 +136,7 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("isActive", entity.getIsActive())
                 .addValue("date", entity.getDate())
                 .addValue("time", entity.getTime())
+                .addValue("completed", entity.getCompleted())
                 .addValue("duration", entity.getDuration());
                // .addValue("dateEndTime", entity.getDateEndTime());
 
