@@ -82,10 +82,10 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 """;
 
     private static final String SELECT_COMPLETED_CLASSROOMS = """
-    SELECT c.*
+    SELECT DISTINCT c.*
     FROM classrooms c
     JOIN inscriptions i ON c.id = i.classroom_id
-    JOIN classroom_documents d ON c.id = d.classroom_id
+    LEFT JOIN classroom_documents d ON c.id = d.classroom_id
     WHERE i.user_id = :userId AND c.completed = true
 """;
 
