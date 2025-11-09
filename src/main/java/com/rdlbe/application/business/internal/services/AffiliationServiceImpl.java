@@ -28,6 +28,7 @@ public class AffiliationServiceImpl implements AffiliationService {
         return affiliations.stream()
                 .map(affiliation -> {
                     AffiliationItem item = new AffiliationItem();
+                    item.setId(affiliation.getId());
                     item.setName(affiliation.getName());
                     item.setLink(affiliation.getLink());
                     return item;

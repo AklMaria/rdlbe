@@ -12,6 +12,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AffiliationItem {
+    private Long id;
     private String name;
     private String link;
 }
