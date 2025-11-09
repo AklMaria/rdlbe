@@ -3,9 +3,14 @@ package com.rdlbe.application.api.controllers;
 import com.rdlbe.application.business.publishing.DocumentService;
 import com.rdlbe.application.views.DocumentItem;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
 
 import java.util.List;
 
@@ -37,5 +42,23 @@ public class DocumentRestController {
     ) {
         log.info("Ricevuto upload '{}' per user {}", file.getOriginalFilename(), userId);
         documentService.saveDoc(userId, file);
+    }
+    // ✅ NUOVO ENDPOINT DI DOWNLOAD documento
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Resource> downloadDocument(@PathVariable Long id) {
+        DocumentItem document = documentService.findById(id);
+        if (document == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource fileResource = documentService.getDocumentAsResource(document);
+        if (fileResource == null || !fileResource.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getFileName() + "\"")
+                .contentType(MediaType.parseMediaType(document.getContentType()))
+                .body(fileResource);
     }
 }

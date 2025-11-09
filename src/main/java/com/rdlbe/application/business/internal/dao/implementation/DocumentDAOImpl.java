@@ -27,6 +27,14 @@ public class DocumentDAOImpl implements DocumentDAO {
     private static final String DELETE_DOCUMENT =
             "DELETE FROM documents WHERE id = :id";
 
+    // ✅ Nuove query per il download
+    private static final String FIND_BY_ID =
+            "SELECT id, user_id, file_name, content_type, content FROM documents WHERE id = :id";
+
+    private static final String GET_FILE_BYTES_BY_ID =
+            "SELECT content FROM documents WHERE id = :id";
+
+
     public DocumentDAOImpl(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
@@ -63,4 +71,29 @@ public class DocumentDAOImpl implements DocumentDAO {
 
         return rowsAffected > 0;
     }
+
+    // ✅ Trova documento per ID
+    @Override
+    public Document findById(Long id) {
+        var params = new MapSqlParameterSource().addValue("id", id);
+        List<Document> result = jdbcTemplate.query(FIND_BY_ID, params, new DocumentRowMapper(objectMapper));
+        if (result.isEmpty()) {
+            log.warn("⚠️ Nessun documento trovato con id {}", id);
+            return null;
+        }
+        return result.get(0);
+    }
+
+    // ✅ Ottiene solo i byte del fileh
+    @Override
+    public byte[] getFileBytesById(Long id) {
+        var params = new MapSqlParameterSource().addValue("id", id);
+        try {
+            return jdbcTemplate.queryForObject(GET_FILE_BYTES_BY_ID, params, byte[].class);
+        } catch (Exception e) {
+            log.error("❌ Errore durante il recupero dei byte per il documento id {}", id, e);
+            return null;
+        }
+    }
+
 }
