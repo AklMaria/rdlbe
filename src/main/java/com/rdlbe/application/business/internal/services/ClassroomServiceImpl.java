@@ -3,6 +3,7 @@ package com.rdlbe.application.business.internal.services;
 import com.rdlbe.application.business.internal.dao.presentation.ClassroomDAO;
 import com.rdlbe.application.business.internal.dao.presentation.InscriptionDAO;
 import com.rdlbe.application.business.internal.domains.Classroom;
+import com.rdlbe.application.business.internal.domains.Document;
 import com.rdlbe.application.business.internal.domains.User;
 import com.rdlbe.application.business.publishing.ClassroomService;
 import com.rdlbe.application.views.*;
@@ -10,9 +11,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -173,18 +177,57 @@ public class ClassroomServiceImpl implements ClassroomService {
     public List<DocumentItem> getClassroomDocs(Long classroomId) {
         return classroomDAO.findClassroomsDocs(classroomId)
                 .stream()
-                .map(doc -> modelMapper.map(doc, DocumentItem.class))
+                .map(doc -> {
+                    DocumentItem item = new DocumentItem();
+                    item.setFileName(doc.getFileName());
+                    item.setContentType(doc.getContentType());
+                    item.setId(doc.getId());
+                    return item;
+                })
                 .toList();
     }
 
     @Override
     public void uploadDoc(Long classroomId, MultipartFile file) {
-        classroomDAO.uploadDoc(classroomId, file);
+        try {
+            classroomDAO.uploadDoc(classroomId, file.getBytes(), file.getOriginalFilename(), file.getContentType());
+            log.info("File '{}' caricato con successo per l’aula {}", file.getOriginalFilename(), classroomId);
+        } catch (IOException e) {
+            log.error("Errore durante il salvataggio del file", e);
+            throw new RuntimeException("Errore durante il salvataggio del documento", e);
+        }
     }
 
     @Override
     public void deleteDoc(Long classroomId, Long docId) {
         classroomDAO.deleteDoc(classroomId, docId);
+    }
+
+    @Override
+    public DocumentItem findById(Long id) {
+        Document doc = classroomDAO.findDocById(id);
+        if (doc == null) {
+            return null;
+        }
+        DocumentItem item = new DocumentItem();
+        item.setId(doc.getId());
+        item.setFileName(doc.getFileName());
+        item.setContentType(doc.getContentType());
+        return item;
+    }
+
+    @Override
+    public Resource getDocumentAsResource(DocumentItem document) {
+        try {
+            byte[] fileBytes = classroomDAO.getFileBytesById(document.getId());
+            if (fileBytes != null) {
+                return new ByteArrayResource(fileBytes);
+            }
+            return null;
+        } catch (Exception e) {
+            log.error("Errore nel recupero del documento classroom ID {}", document.getId(), e);
+            return null;
+        }
     }
 
 }

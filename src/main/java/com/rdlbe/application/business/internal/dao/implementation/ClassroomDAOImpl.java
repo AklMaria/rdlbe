@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,9 +76,6 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     private static final String SELECT_CLASSROOMS_DOCS = """
     SELECT cd.*
     FROM classroom_documents cd
-    -- JOIN inscriptions i ON c.id = i.classroom_id
-    -- JOIN classrooms c ON c.id = cd.classroom_id
-    -- WHERE i.user_id = :userId
     WHERE cd.classroom_id = :classroomId
 """;
 
@@ -90,8 +88,8 @@ public class ClassroomDAOImpl implements ClassroomDAO {
 """;
 
     private static final String UPLOAD_DOC = """
-    INSERT INTO classroom_documents (classroom_id, file_name, content_type, content, created_at)
-    VALUES (:classroomId, :fileName, :contentType, :content, :createdAt)
+    INSERT INTO classroom_documents (classroom_id, file_name, content_type, content)
+    VALUES (:classroomId, :fileName, :contentType, :content)
 """;
 
     private static final String DELETE_DOC = """
@@ -99,6 +97,12 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     -- WHERE classroom_id = :classroomId
     WHERE id = :docId
 """;
+
+    private static final String FIND_DOC_BY_ID =
+            "SELECT id, classroom_id, file_name, content_type, content FROM classroom_documents WHERE id = :id";
+
+    private static final String GET_FILE_BYTES_BY_ID =
+            "SELECT content FROM classroom_documents WHERE id = :id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
@@ -210,18 +214,19 @@ public class ClassroomDAOImpl implements ClassroomDAO {
     @Override
     public List<Document> findClassroomsDocs(Long classroomId) {
         var params = new MapSqlParameterSource().addValue("classroomId", classroomId);
-        return jdbcTemplate.query(SELECT_CLASSROOMS_DOCS, params, new DocumentDAO.DocumentRowMapper(objectMapper));
+        return jdbcTemplate.query(SELECT_CLASSROOMS_DOCS, params, new ClassroomDocumentRowMapper(objectMapper));
     }
 
     @Override
-    public void uploadDoc(Long classroomId, MultipartFile file) {
+    public void uploadDoc(Long classroomId,byte[] fileData, String fileName, String contentType) {
         var params = new MapSqlParameterSource()
                 .addValue("classroomId", classroomId)
-                .addValue("fileName", file.getName())
-                .addValue("contentType", file.getContentType())
-                .addValue("content", file)
-                .addValue("createdAt", LocalDateTime.now());
+                .addValue("fileName", fileName)
+                .addValue("contentType", contentType)
+                .addValue("content", fileData);
+
         jdbcTemplate.update(UPLOAD_DOC, params);
+        log.info("Documento '{}' salvato per l’aula con id {}", fileName, classroomId);
     }
 
     @Override
@@ -231,5 +236,26 @@ public class ClassroomDAOImpl implements ClassroomDAO {
                 .addValue("docId", docId);
         jdbcTemplate.update(DELETE_DOC, params);
     }
+
+
+    @Override
+    public Document findDocById(Long id) {
+        var params = new MapSqlParameterSource().addValue("id", id);
+        List<Document> result = jdbcTemplate.query(FIND_DOC_BY_ID, params, new DocumentDAO.DocumentRowMapper(objectMapper));
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    @Override
+    public byte[] getFileBytesById(Long id) {
+        var params = new MapSqlParameterSource().addValue("id", id);
+        try {
+            return jdbcTemplate.queryForObject(GET_FILE_BYTES_BY_ID, params, byte[].class);
+        } catch (Exception e) {
+            log.error("Errore durante il recupero del file per classroom doc id {}", id, e);
+            return null;
+        }
+    }
+
+
 
 }

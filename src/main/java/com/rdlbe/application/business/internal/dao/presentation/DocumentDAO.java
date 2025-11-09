@@ -19,7 +19,7 @@ public interface DocumentDAO {
     boolean deleteDoc(Long id);
 
 
-    // ✅ NUOVI METODI PER IL DOWNLOAD
+
     Document findById(Long id);
 
     byte[] getFileBytesById(Long id);

@@ -23,4 +23,8 @@ public interface ClassroomService {
     List<DocumentItem> getClassroomDocs(Long classroomId);
     void uploadDoc(Long classroomId, MultipartFile file);
     void deleteDoc(Long classroomId, Long docId);
+    DocumentItem findById(Long id);
+    org.springframework.core.io.Resource getDocumentAsResource(DocumentItem document);
+
+
 }

@@ -6,7 +6,11 @@ import com.rdlbe.application.views.ClassroomRequest;
 import com.rdlbe.application.views.ClassroomUsersDetailsItem;
 import com.rdlbe.application.views.DocumentItem;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,13 +74,36 @@ public class ClassroomRestController {
     }
 
     @GetMapping("/{id}/docs")
-    public List<DocumentItem> getClassroomDocs(@PathVariable("id") Long id, @RequestParam("userId") Long userId) {
+    public List<DocumentItem> getClassroomDocs(@PathVariable("id") Long id ) {
         return classroomService.getClassroomDocs(id);
     }
 
+
+    // NUOVO ENDPOINT DI DOWNLOAD documento
+    @GetMapping("/document/download/{id}")
+    public ResponseEntity<Resource> downloadDocumentClassroom(@PathVariable Long id) {
+        DocumentItem document = classroomService.findById(id);
+        if (document == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource fileResource = classroomService.getDocumentAsResource(document);
+        if (fileResource == null || !fileResource.exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getFileName() + "\"")
+                .contentType(MediaType.parseMediaType(document.getContentType()))
+                .body(fileResource);
+    }
+
+
+
+
     @PostMapping(path="/{id}/doc", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void uploadDoc(
-            @PathVariable("id") Long id,
+            @RequestParam("id") Long id,
             @RequestParam("file") MultipartFile file
     ) {
         log.info("Ricevuto upload '{}' per classroom id {}", file.getOriginalFilename(), id);
