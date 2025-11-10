@@ -31,6 +31,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://frontend-426407479258.europe-west9.run.app",
                 "https://frontend-new-426407479258.europe-west1.run.app",
+                "https://redditodiliberta.it",
+                "https://www.redditodiliberta.it",
                 "http://localhost:4200"
         ));
 
