@@ -30,6 +30,7 @@ public class SecurityConfig {
         // Usa il dominio reale del frontend su Cloud Run
         configuration.setAllowedOrigins(List.of(
                 "https://frontend-426407479258.europe-west9.run.app",
+                "https://frontend-new-426407479258.europe-west1.run.app",
                 "http://localhost:4200"
         ));
 
