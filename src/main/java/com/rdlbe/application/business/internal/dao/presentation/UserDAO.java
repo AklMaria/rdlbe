@@ -82,6 +82,12 @@ public interface UserDAO extends Dao<User, Long> {
                 user.setUserLevel(User.UserLevel.valueOf(levelStr));
             }
 
+            byte[] pwdBytes = rs.getBytes("password");
+            if (pwdBytes != null && pwdBytes.length > 0) {
+                user.setPassword(pwdBytes);
+            }
+
+
             return user;
         }
 

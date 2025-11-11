@@ -8,10 +8,13 @@ import com.rdlbe.application.views.UserRequest;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,19 +25,21 @@ public class UserServiceImpl implements UserService {
     private final UserDAO userDAO;
     private final ModelMapper modelMapper;
     private final AuthService authService;
+    private final PasswordEncoder passwordEncoder ;
 
-    public UserServiceImpl(UserDAO userDAO, ModelMapper modelMapper, AuthService authService) {
+    public UserServiceImpl(UserDAO userDAO, ModelMapper modelMapper, AuthService authService, PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
         this.modelMapper = modelMapper;
 		this.authService = authService;
-	}
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostConstruct
     private void init() {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.STRICT)
                 .setFieldMatchingEnabled(true)
-                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
 
         // Configurazioni per mappare correttamente
         // Mappature necessarie
@@ -59,6 +64,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserItem createUser(UserRequest userDto) {
         User user = modelMapper.map(userDto, User.class);
+        // 👇 conversione esplicita della password (String) in byte[] per DB
+        if (userDto.getPassword() != null) {
+            // Hash della password (es. BCrypt)
+            String encodedPwd = passwordEncoder.encode(userDto.getPassword());
+            // Converte in byte[] per il DB (colonna bytea)
+            user.setPassword(encodedPwd.getBytes(StandardCharsets.UTF_8));
+        }
         Long id = userDAO.create(user);
         user.setId(id);
         return modelMapper.map(user, UserItem.class);
@@ -78,8 +90,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserItem> login(String mail, String rawPassword) {
-        return authService.checkCredentials(mail, rawPassword);
+    public Optional<UserItem> login(String email, String rawPassword) {
+        return authService.checkCredentials(email, rawPassword);
     }
 
     @Override

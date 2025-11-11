@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.rdlbe.application.views.UserItem;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Service
@@ -33,8 +35,18 @@ public class AuthService {
 
         User user = userOptional.get();
 
-        String storedHash = userDAO.decryptPwd(user.getId());
+        // ✅ Leggi direttamente l’hash salvato come byte[]
+        if (user.getPassword() == null) {
+            return Optional.empty(); // nessuna password salvata
+        }
 
+        String storedHash = new String(user.getPassword(), StandardCharsets.UTF_8);
+        System.out.println(">>> HASH dal DB: " + storedHash);
+        System.out.println(">>> RAW password: " + plainPassword);
+        System.out.println(">>> MATCH result: " + passwordEncoder.matches(plainPassword, new String(user.getPassword(), StandardCharsets.UTF_8)));
+
+
+        // ✅ Confronta la password in chiaro con l’hash bcrypt
         if (passwordEncoder.matches(plainPassword, storedHash)) {
             UserItem userItem = modelMapper.map(user, UserItem.class);
             return Optional.of(userItem);
@@ -42,5 +54,6 @@ public class AuthService {
 
         return Optional.empty();
     }
+
 
 }

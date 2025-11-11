@@ -80,7 +80,7 @@ public class UserRestController {
 
     @PostMapping("/login")
     public ResponseEntity<UserItem> login(@RequestBody LoginRequest request) {
-        return userService.login(request.getMail(), request.getPassword())
+        return userService.login(request.getEmail(), request.getPassword())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null));
     }

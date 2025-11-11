@@ -23,8 +23,8 @@ public class UserDAOImpl implements UserDAO {
     private final static String FIND_BY_ID = "SELECT u.* FROM users u WHERE u.id = :id";
     private final static String FIND_BY_EMAIL = "SELECT u.* FROM users u WHERE u.email = :email";
     private final static String INSERT_USER = """
-    INSERT INTO users (username,first_name, last_name, email, birth_date, role, state, credits,user_level)
-    VALUES (:username,:first_name, :last_name, :email, :birth_date, :role, :state, :credits, :user_level)
+    INSERT INTO users (username,first_name, last_name, email, birth_date, role, state, credits,user_level,password)
+    VALUES (:username,:first_name, :last_name, :email, :birth_date, :role, :state, :credits, :user_level, :password)
     RETURNING id
 """;
 
@@ -66,8 +66,8 @@ public class UserDAOImpl implements UserDAO {
                 .addValue("role", entity.getRole() != null ? entity.getRole().name() : User.Role.USER.name())
                 .addValue("state", entity.getState())
                 .addValue("credits", entity.getCredits())
-                .addValue("user_level", entity.getUserLevel() != null ? entity.getUserLevel().name() : User.UserLevel.BEGINNER.name());
-
+                .addValue("user_level", entity.getUserLevel() != null ? entity.getUserLevel().name() : User.UserLevel.BEGINNER.name())
+                .addValue("password", entity.getPassword());
 
         return jdbcTemplate.queryForObject(INSERT_USER, params, Long.class);
     }

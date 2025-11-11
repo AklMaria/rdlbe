@@ -19,4 +19,6 @@ public class UserRequest {
     private User.UserLevel userLevel;
     private Boolean state;
     private Integer credits;
+    private String password;
+
 }
